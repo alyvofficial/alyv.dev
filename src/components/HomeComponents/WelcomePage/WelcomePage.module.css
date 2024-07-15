@@ -1,0 +1,39 @@
+/* Welcome page */
+.welcomePage {
+    height: 100vh;
+    background-color: black;
+    padding: 10px 20px 0 20px;
+    display: flex;
+    align-items: flex-end;
+    scroll-snap-align: start;
+  }
+  .welcomeContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .alyvImg {
+    width: 30%;
+  }
+  .welcomeLeftContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  h1 {
+    color: white;
+    font-size: 3.3em;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .welcomeBtn {
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: calc(1em + 0.1vw);
+    cursor: pointer;
+    border: none;
+  }

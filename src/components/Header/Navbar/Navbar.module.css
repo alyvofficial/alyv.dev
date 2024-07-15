@@ -1,0 +1,27 @@
+.navbarUL {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    text-transform: uppercase;
+}
+
+.navbarLink {
+    cursor: pointer;
+    position: relative;
+    color: rgb(0, 0, 0);
+}
+.navbarLink::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1.7px;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+.navbarLink:hover::after {
+    background-color: #3e92cc;
+}
