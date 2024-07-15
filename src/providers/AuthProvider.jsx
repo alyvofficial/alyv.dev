@@ -27,7 +27,6 @@ const AuthProvider = (props) => {
 
   // eslint-disable-next-line react/prop-types
   const { children } = props;
-
   const logoutFunction = useCallback(async () => {
     try {
       setAuthLoading(true);
@@ -61,16 +60,21 @@ const AuthProvider = (props) => {
         try {
           const docSnap = await getDoc(userDocRef);
           const displayName = user.displayName || "NoName NoSurname";
-            if (!docSnap.exists()) {
+          if (!docSnap.exists()) {
             await setDoc(userDocRef, {
               Name: displayName.split(" ")[0],
               Surname: displayName.split(" ")[1],
               email: user.email,
               photoUrl: user.photoURL || "",
-              creationTime: user.metadata.creationTime,
-              lastSignInTime: user.metadata.lastSignInTime,
+              creationTime: new Date(user.metadata.creationTime).toLocaleString(
+                "en-US",
+                { timeZone: "Asia/Baku" }
+              ),
+              lastSignInTime: new Date(
+                user.metadata.lastSignInTime
+              ).toLocaleString("en-US", { timeZone: "Asia/Baku" }),
             });
-            } else {
+          } else {
             const userDocData = docSnap.data();
             const updateData = {};
 
@@ -83,20 +87,24 @@ const AuthProvider = (props) => {
               !userDocData.lastSignInTime
             ) {
               if (!userDocData.Name)
-              updateData.Name = displayName.split(" ")[0];
+                updateData.Name = displayName.split(" ")[0];
               if (!userDocData.Surname)
-              updateData.Surname = displayName.split(" ")[1];
+                updateData.Surname = displayName.split(" ")[1];
               if (!userDocData.email) updateData.email = user.email;
               if (!userDocData.photoUrl)
-              updateData.photoUrl = user.photoURL || "";
+                updateData.photoUrl = user.photoURL || "";
               if (!userDocData.creationTime)
-              updateData.creationTime = user.metadata.creationTime;
+                updateData.creationTime = new Date(
+                  user.metadata.creationTime
+                ).toLocaleString("en-US", { timeZone: "Asia/Baku" });
               if (!userDocData.lastSignInTime)
-              updateData.lastSignInTime = user.metadata.lastSignInTime;
+                updateData.lastSignInTime = new Date(
+                  user.metadata.lastSignInTime
+                ).toLocaleString("en-US", { timeZone: "Asia/Baku" });
 
               await setDoc(userDocRef, { ...userDocData, ...updateData });
             }
-            }
+          }
 
           setAuthLoading(false);
         } catch (error) {
@@ -124,8 +132,14 @@ const AuthProvider = (props) => {
         Surname: displayName.split(" ")[1],
         email,
         photoUrl: user.photoURL || "",
-        creationTime: user.metadata.creationTime,
-        lastSignInTime: user.metadata.lastSignInTime,
+        creationTime: new Date(user.metadata.creationTime).toLocaleString(
+          "en-US",
+          { timeZone: "Asia/Baku" }
+        ),
+        lastSignInTime: new Date(user.metadata.lastSignInTime).toLocaleString(
+          "en-US",
+          { timeZone: "Asia/Baku" }
+        ),
       };
 
       await setDoc(userDocRef, userDocData);
