@@ -24,4 +24,4 @@ jobs:
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ALYV_DEVV }}
-          projectId: alyvbundle-1708252913289
+          projectId: alyv-devv
