@@ -4,8 +4,6 @@ header {
     align-items: center;
     justify-content: space-between;
     padding: 5px 20px;
-    position: absolute;
-    z-index: 999;
     background-color: white;
 }
 .logoHolder{
