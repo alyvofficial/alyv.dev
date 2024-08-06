@@ -1,10 +1,20 @@
+import { useState } from "react";
 import styles from "./Header.module.css";
 import { NavLink } from "react-router-dom";
-import { Navbar } from "./Navbar/Navbar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { useAuthContext } from "../../providers/AuthProvider";
 
 export const Header = () => {
+  const { googleSignIn, user, logout } = useAuthContext();
+  const [isProfileMinimized, setIsProfileMinimized] = useState(false);
+  const handleProfileClick = () => {
+    setIsProfileMinimized(!isProfileMinimized);
+  };
   return (
-    <header>
+  
+    
+    <header className={styles.header}>
       <NavLink className={styles.logoHolder} to={"/"}>
         <svg
           id="Layer_1"
@@ -32,7 +42,54 @@ export const Header = () => {
           />
         </svg>
       </NavLink>
-      <Navbar />
+      <ul className={styles.navbarUL}>
+        <NavLink to="/articles" className={styles.navbarLink}>
+          <li className={styles.navbarLI}>Məqalələr</li>
+        </NavLink>
+        <NavLink to="/portfolio" className={styles.navbarLink}>
+          <li className={styles.navbarLI}>Portfolio</li>
+        </NavLink>
+        <NavLink to="/contact" className={styles.navbarLink}>
+          <li className={styles.navbarLI}>Əlaqə</li>
+        </NavLink>
+      </ul>
+      {!user ? (
+        <div className={styles.loginContainer}>
+          <button onClick={googleSignIn} className=" flex gap-2  text-black">
+            <img
+              className="w-6 h-6"
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              loading="lazy"
+              alt="google logo"
+            />
+            <span>Login with Google</span>
+          </button>
+        </div>
+      ) : (
+        <div
+          className={`${styles.profileContainer} ${
+            isProfileMinimized ? styles.minimized : ""
+          }`}
+        >
+          <div className={styles.profileImage} onClick={handleProfileClick}>
+            <img
+              className={styles.profileURL}
+              src={user.photoURL}
+              alt={user.displayName}
+            />
+          </div>
+          {!isProfileMinimized && (
+            <>
+              <h4 className={styles.profileName}>{user.displayName}</h4>
+              <FontAwesomeIcon
+                className={styles.logoutBtn}
+                icon={faRightFromBracket}
+                onClick={logout}
+              />
+            </>
+          )}
+        </div>
+      )}
     </header>
   );
 };

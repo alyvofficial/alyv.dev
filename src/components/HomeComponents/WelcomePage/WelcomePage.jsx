@@ -1,23 +1,20 @@
-import welcomeImg from "../../../assets/Images/ALYV.webp";
-import styles from "./WelcomePage.module.css";
+// import welcomeImg from "../../../assets/Images/ALYV.webp";
 
 export const WelcomePage = () => {
-
-
-
   return (
-    <section className={styles.welcomePage}>
-      <div className={styles.welcomeText}>
-        <h1 className={styles.welcomeHeader}>Əliyev Əli</h1>
-        <p className={styles.welcomeParagraph}>
-          Qrafik / UI dizayner &amp; Front-end veb &ldquo;developer&rdquo;;
-        </p><br />
-        <a href="/articles" className={styles.welcomeParagraphA}>
+    <section className="">
+      <div className="">
+        <h1 className="">Əliyev Əli</h1>
+        <p className="">
+          Qrafik / UI dizayner &amp; Front-end veb &ldquo;developer&rdquo;
+        </p>
+        <br />
+        <a href="/articles" className="">
           Məqalələrə keçid etmək üçün <span>klikləyin</span>
         </a>
       </div>
-      <div className={styles.welcomeContainer}>
-        <img className={styles.alyvImg} src={welcomeImg} alt="Ali Aliyev" />
+      <div className="">
+        <img className="" alt="Ali Aliyev" />
       </div>
     </section>
   );

@@ -1,11 +1,94 @@
-header {
+.header {
+    width: 16%;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ebebeb;
+    padding: 10px;
+}
+.logoHolder{
+    width: 60px;
+}
+.profileContainer {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 5px 20px;
     background-color: white;
+    border-radius: 10px;
+    padding: 10px;
 }
-.logoHolder{
+.profileImage {
     width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+.profileURL {
+    border-radius: 50%;
+}
+.profileName {
+    font-size: 0.9rem;
+}
+.logoutBtn {
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.loginContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+.loginButton {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+.minimized {
+    justify-content: center;
+  }
+
+
+@media screen and (max-width: 768px) {
+    .header {
+        width: 100%;
+        height: 10vh;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px;
+    }
+    .logoHolder {
+        width: 40px;
+    }
+    .profileContainer {
+        width: 50%;
+        padding: 5px;
+    }
+    .profileImage {
+        width: 40px;
+        height: 40px;
+    }
+    .loginContainer {
+        width: 40%;
+        padding: 5px;
+    }
+    .loginButton {
+        padding: 5px;
+        width: 60%;
+    }
+    .minimized {
+        width: fit-content;
+        background-color: transparent;
+      }
+    
 }
