@@ -1,20 +1,21 @@
-// import welcomeImg from "../../../assets/Images/ALYV.webp";
+import welcomeImg from "../../../assets/Images/ALYV.webp";
+import styles from "./WelcomePage.module.css";
+import { NavLink } from "react-router-dom";
 
 export const WelcomePage = () => {
   return (
-    <section className="">
-      <div className="">
-        <h1 className="">Əliyev Əli</h1>
-        <p className="">
-          Qrafik / UI dizayner &amp; Front-end veb &ldquo;developer&rdquo;
-        </p>
-        <br />
-        <a href="/articles" className="">
+    <section className={styles.welcomePage}>
+      <div className={styles.welcomeText}>
+        <h1 className={styles.welcomeHeader}>Əliyev Əli</h1>
+        <p className={styles.welcomeParagraph}>
+          Graphic / UI designer &amp; Front-end web developer
+        </p><br />
+        <NavLink to="/articles" className={styles.welcomeParagraphA}>
           Məqalələrə keçid etmək üçün <span>klikləyin</span>
-        </a>
+        </NavLink>
       </div>
-      <div className="">
-        <img className="" alt="Ali Aliyev" />
+      <div className={styles.welcomeContainer}>
+        <img className={styles.alyvImg} src={welcomeImg} alt="Ali Aliyev" />
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
 .header {
-    width: 16%;
+    width: 15vw;
     height: 100svh;
     display: flex;
     flex-direction: column;
@@ -9,7 +9,7 @@
     padding: 10px;
 }
 .logoHolder{
-    width: 60px;
+    width: 50px;
 }
 .profileContainer {
     width: 100%;
@@ -21,8 +21,8 @@
     padding: 10px;
 }
 .profileImage {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     cursor: pointer;
 }
 .profileURL {
@@ -53,6 +53,9 @@
     justify-content: center;
     align-items: center;
     border-radius: 10px;
+}
+.navbarLI {
+    font-size: 1.1rem;
 }
 .minimized {
     justify-content: center;
@@ -90,5 +93,12 @@
         width: fit-content;
         background-color: transparent;
       }
+    .navbarUL {
+        display: flex;
+        gap: 10px;
+    }
+    .navbarLI {
+        font-size: 0.9rem;
+    }
     
 }

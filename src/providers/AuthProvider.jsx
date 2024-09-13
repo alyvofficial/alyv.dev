@@ -11,7 +11,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, getFirestore } from "firebase/firestore";
 import { useFirebaseContext } from "./FirebaseProvider";
 
 export const AuthContext = createContext({});
@@ -20,6 +20,7 @@ const PROFILE_COLLECTION = "users";
 
 const AuthProvider = (props) => {
   const { myAuth, myFS } = useFirebaseContext();
+  const firestore = getFirestore();
 
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -154,7 +155,7 @@ const AuthProvider = (props) => {
   };
 
   if (authLoading) {
-    return <div className="authLoadingPage">User loading...</div>;
+    return <div className="w-full h-screen flex items-center justify-center">User loading...</div>;
   }
 
   const theValues = {
@@ -163,6 +164,7 @@ const AuthProvider = (props) => {
     user,
     logout: logoutFunction,
     googleSignIn: googleSignInFunction,
+    firestore,
   };
 
   return (
