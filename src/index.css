@@ -15,17 +15,9 @@ html, body {
     scroll-behavior: smooth;
 }
 ::-webkit-scrollbar {
-    display: none;
+    width: 8px;
 }
-#root {
-    display: flex;
+::-webkit-scrollbar-thumb {
+    background-color: #1a1a1a;
 }
-
-
-@media screen and (max-width: 768px) {
-    #root {
-        display: flex;
-        flex-direction: column;
-    }
-        
-}
+  

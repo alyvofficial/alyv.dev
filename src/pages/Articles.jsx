@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { useAuthContext } from "../providers/AuthProvider";
 import {
   collection,
-  addDoc,
   getDocs,
   query,
   deleteDoc,
@@ -14,58 +15,47 @@ import {
 import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import showdown from "showdown";
+import hljs from 'highlight.js';
+import './Highlight.css'; // or any other theme
 
 export const Articles = () => {
   const { user, firestore } = useAuthContext();
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [category, setCategory] = useState("");
   const [articles, setArticles] = useState([]);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [editArticleId, setEditArticleId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
-  const [categories] = useState([
-    "Proqramlaşdırma",
-    "Qrafik dizayn",
-    "İdman",
-    "Təhsil",
-    "Digər",
-  ]);
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", { color: [] }, "image"],
+      [{ "code-block": true }],
+      ["clean"],
+      [{ font: [] }],
+    ],
+  };
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "indent",
+    "image",
+    "code-block",
+    "color",
+    "font",
+  ];
 
   const isAdmin = user && user.email === "alyvdev@gmail.com";
-
-  const addArticle = async (e) => {
-    e.preventDefault();
-    if (!isAdmin) {
-      toast.error("Məqalə əlavə etmək üçün admin olmalısınız.");
-      return;
-    }
-
-    if (!title || !content || !category) {
-      toast.error("Zəhmət olmasa, bütün boş xanaları doldurun!");
-      return;
-    }
-
-    try {
-      await addDoc(collection(firestore, "articles"), {
-        title,
-        content,
-        category,
-        userId: user.uid,
-        createdAt: new Date(),
-        likes: [],
-      });
-      setTitle("");
-      setContent("");
-      setCategory("");
-      toast.success("Məqalə uğurla əlavə olundu!");
-      fetchArticles();
-    } catch (error) {
-      console.error("Məqalə əlavə edilərkən xəta baş verdi: ", error);
-      toast.error("Məqalə əlavə oluna bilmədi!");
-    }
-  };
+  const articleContentRef = useRef(null);
 
   const fetchArticles = async () => {
     const articlesRef = collection(firestore, "articles");
@@ -146,57 +136,18 @@ export const Articles = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, firestore]);
 
+  useEffect(() => {
+    if (articleContentRef.current) {
+      hljs.highlightAll(); // Highlight code blocks after content is rendered
+    }
+  }, [articles]); // Trigger when articles change
+
+  // Initialize Showdown Converter
+  const converter = new showdown.Converter();
+
   return (
-    <section className="p-6 h-screen overflow-auto w-full">
-      <ToastContainer position="top-right" />
-
-      {isAdmin && (
-        <div>
-          <form onSubmit={addArticle} className="space-y-4 max-w-full">
-            <div>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-                placeholder="Başlıq"
-              />
-            </div>
-
-            <div>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-                placeholder="Məzmun"
-              />
-            </div>
-
-            <div>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-              >
-                <option value="">Kateqoriya seçin</option>
-                {categories.map((cat, idx) => (
-                  <option key={idx} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Məqalə əlavə et
-            </button>
-          </form>
-        </div>
-      )}
-
+    <section className="p-6 h-screen overflow-auto">
+      <ToastContainer position="top-center" autoClose={2000} />
       <h2 className="text-2xl font-bold my-6">Məqalələr</h2>
       <div className="space-y-4">
         {articles.length > 0 ? (
@@ -206,16 +157,20 @@ export const Articles = () => {
               className={`p-4 border border-gray-300 rounded relative max-w-full${
                 editArticleId === article.id ? "bg-gray-100" : ""
               }`}
-              onClick={() => {
-                if (editArticleId !== article.id) {
-                  setSelectedArticle(
-                    selectedArticle?.id === article.id ? null : article
-                  );
-                }
-              }}
             >
-              <h3 className="text-xl font-semibold">{article.title}</h3>
-              <span className="text-sm text-blue-600">
+              <h3
+                onClick={() => {
+                  if (editArticleId !== article.id) {
+                    setSelectedArticle(
+                      selectedArticle?.id === article.id ? null : article
+                    );
+                  }
+                }}
+                className="text-xl font-semibold cursor-pointer hover:text-blue-500"
+              >
+                {article.title}
+              </h3>
+              <span className="text-sm text-blue-900">
                 Kateqoriya: {article.category}
               </span>
               <p className="text-sm text-gray-500 mb-9">
@@ -227,7 +182,13 @@ export const Articles = () => {
               </p>
               {selectedArticle?.id === article.id &&
                 editArticleId !== article.id && (
-                  <p className="mt-4 mb-8 text-gray-700">{article.content}</p>
+                  <div
+                    className="mt-4 mb-8 text-gray-700"
+                    ref={articleContentRef}
+                    dangerouslySetInnerHTML={{
+                      __html: converter.makeHtml(article.content),
+                    }}
+                  ></div>
                 )}
 
               <button
@@ -284,19 +245,21 @@ export const Articles = () => {
                     Sil
                   </button>
 
-                  {/* Düzenleme işlemi */}
                   {editArticleId === article.id && (
-                    <div className="h-96">
+                    <div className="">
                       <input
                         type="text"
                         value={editTitle}
                         onChange={(e) => handleEditChange(e, "title")}
                         className="block w-full mt-2 p-2 border border-gray-300 rounded"
                       />
-                      <textarea
+                      <ReactQuill
                         value={editContent}
-                        onChange={(e) => handleEditChange(e, "content")}
-                        className="block h-[70%] w-full mt-2 p-2 border border-gray-300 rounded"
+                        onChange={(content) => setEditContent(content)}
+                        className="block w-full mt-2 p-2 border border-gray-300 rounded mb-8"
+                        theme="snow"
+                        modules={modules}
+                        formats={formats}
                       />
                       <button
                         onClick={(e) => {
@@ -310,7 +273,7 @@ export const Articles = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setEditArticleId(null); // İptal işlemi
+                          setEditArticleId(null);
                         }}
                         className="absolute bottom-2 left-24 mx-3 px-3 py-1 bg-gray-500 text-white text-sm rounded"
                       >
@@ -322,8 +285,10 @@ export const Articles = () => {
               )}
             </div>
           ))
+        ) : user ? (
+          <p>Məqalə yoxdur.</p>
         ) : (
-          <p>Hələ məqalə yoxdu.</p>
+          <p>Məqalələri görmək üçün Google hesabı ilə giriş edin.</p>
         )}
       </div>
     </section>

@@ -56,7 +56,7 @@ const AuthProvider = (props) => {
         }
 
         setUser(user);
-        document.title = `${user.email} - ALYV Design Bundle`;
+        document.title = `${user.email} - ALYV Dev`;
 
         const userDocRef = doc(myFS, PROFILE_COLLECTION, user.uid);
 
