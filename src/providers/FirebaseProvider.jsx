@@ -1,10 +1,14 @@
+// FirebaseProvider.jsx
 import { createContext, useContext, useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import {
+  getFirestore,
+  connectFirestoreEmulator,
+} from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
-import { getFunctions } from 'firebase/functions';
-import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
+import { getFunctions } from "firebase/functions";
+import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 
 export const FirebaseContext = createContext({});
 
@@ -15,7 +19,7 @@ const firebaseConfig = {
   storageBucket: "alyv-devv.appspot.com",
   messagingSenderId: "324116736339",
   appId: "1:324116736339:web:7e3642f6e49c9f797919a6",
-  measurementId: "G-GX74TFM5V0"
+  measurementId: "G-GX74TFM5V0",
 };
 
 const FirebaseProvider = (props) => {
@@ -54,7 +58,9 @@ const FirebaseProvider = (props) => {
       let AUTH_PORT = 9099; // or whatever you set the port to in firebase.json
       if (AUTH_HOST && AUTH_PORT) {
         let AUTH_URL = `http://${AUTH_HOST}:${AUTH_PORT}`;
-        console.log(`connectAuthEmulator(${AUTH_URL}, {disableWarnings: true})`);
+        console.log(
+          `connectAuthEmulator(${AUTH_URL}, {disableWarnings: true})`
+        );
         //    warns you not to use any real credentials -- we don't need that noise :)
         connectAuthEmulator(myAuth, AUTH_URL, { disableWarnings: true });
 
@@ -95,7 +101,7 @@ const FirebaseProvider = (props) => {
     }
 
     setFirebaseInitializing(false);
-  }, [myAuth, myFS, myStorage, myDB]);
+  }, [myAuth, myFS, myStorage, myDB]); 
 
   if (firebaseInitializing) {
     return <h1>Loading</h1>;
