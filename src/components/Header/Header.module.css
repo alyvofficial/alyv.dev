@@ -61,6 +61,7 @@
 }
 
 .navbarUL {
+    list-style: none;
     flex-direction: column;
     gap: 5px;
     display: none;

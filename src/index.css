@@ -20,4 +20,9 @@ html, body {
 ::-webkit-scrollbar-thumb {
     background-color: #1a1a1a;
 }
-  
+ul {
+    list-style: initial;
+}
+ol {
+    list-style: decimal;
+}

@@ -16,8 +16,8 @@ import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import showdown from "showdown";
-import hljs from 'highlight.js';
-import './Highlight.css'; // or any other theme
+import hljs from "highlight.js";
+import "./Highlight.css";
 
 export const Articles = () => {
   const { user, firestore } = useAuthContext();
@@ -26,6 +26,18 @@ export const Articles = () => {
   const [editArticleId, setEditArticleId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const [categories] = useState([
+    "Proqramlaşdırma",
+    "Qrafik dizayn",
+    "İdman",
+    "Təhsil",
+    "Digər",
+  ]);
+
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -37,6 +49,7 @@ export const Articles = () => {
       [{ font: [] }],
     ],
   };
+
   const formats = [
     "header",
     "bold",
@@ -138,23 +151,87 @@ export const Articles = () => {
 
   useEffect(() => {
     if (articleContentRef.current) {
-      hljs.highlightAll(); // Highlight code blocks after content is rendered
+      hljs.highlightAll();
     }
-  }, [articles]); // Trigger when articles change
+  }, [articles]);
 
-  // Initialize Showdown Converter
   const converter = new showdown.Converter();
 
+  // Filter and sort the articles
+  const filteredAndSortedArticles = articles
+    .filter((article) => {
+      const matchesSearch = article.title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "all" || article.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      if (sortOrder === "newest") {
+        return b.createdAt.seconds - a.createdAt.seconds;
+      } else if (sortOrder === "oldest") {
+        return a.createdAt.seconds - b.createdAt.seconds;
+      } else if (sortOrder === "A-Z") {
+        return a.title.localeCompare(b.title);
+      } else {
+        return b.title.localeCompare(a.title);
+      }
+    });
+
   return (
-    <section className="p-6 h-screen overflow-auto">
+    <section className="p-6 flex flex-col w-full">
       <ToastContainer position="top-center" autoClose={2000} />
-      <h2 className="text-2xl font-bold my-6">Məqalələr</h2>
-      <div className="space-y-4">
-        {articles.length > 0 ? (
-          articles.map((article) => (
+      <input
+        type="text"
+        placeholder="Axtarışa başlayın..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="mb-4 p-2 border border-gray-300 h-8 rounded w-48 focus:outline-none"
+      />
+
+      {/* Sorting Options */}
+      <div className="mb-4">
+        <label htmlFor="sortOrder" className=""></label>
+        <select
+          id="sortOrder"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          className="p-2 border border-gray-300 rounded focus:outline-none"
+        >
+          <option value="newest">Yenilər</option>
+          <option value="oldest">Köhnələr</option>
+          <option value="A-Z">A-Z</option>
+          <option value="Z-A">Z-A</option>
+        </select>
+
+        <label htmlFor="category" className="mr-2"></label>
+        <select
+          id="category"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="p-2 border border-gray-300 rounded focus:outline-none"
+        >
+          <option value="all">Hamısı</option>
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Category Filter */}
+      <div className="mb-4">
+
+      </div>
+
+      <div className="space-y-4 flex items-center flex-col">
+        {filteredAndSortedArticles.length > 0 ? (
+          filteredAndSortedArticles.map((article) => (
             <div
               key={article.id}
-              className={`p-4 border border-gray-300 rounded relative max-w-full${
+              className={`p-4 border border-gray-300 rounded relative w-full${
                 editArticleId === article.id ? "bg-gray-100" : ""
               }`}
             >
@@ -166,24 +243,24 @@ export const Articles = () => {
                     );
                   }
                 }}
-                className="text-xl font-semibold cursor-pointer hover:text-blue-500"
+                className="text-lg font-semibold cursor-pointer hover:text-blue-500"
               >
                 {article.title}
               </h3>
               <span className="text-sm text-blue-900">
                 Kateqoriya: {article.category}
               </span>
-              <p className="text-sm text-gray-500 mb-9">
+              <p className="text-xs text-gray-500 mb-5">
                 Yazıldığı tarix:{" "}
                 {format(
                   new Date(article.createdAt.seconds * 1000),
-                  "dd/MM/yyyy"
+                  "dd/MM/yyyy HH:mm"
                 )}
               </p>
               {selectedArticle?.id === article.id &&
                 editArticleId !== article.id && (
                   <div
-                    className="mt-4 mb-8 text-gray-700"
+                    className=" mx-1 my-8 bg-neutral-100 p-6 rounded"
                     ref={articleContentRef}
                     dangerouslySetInnerHTML={{
                       __html: converter.makeHtml(article.content),

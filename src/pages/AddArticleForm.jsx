@@ -62,12 +62,15 @@ export const AddArticleForm = () => {
     }
 
     try {
+      const createdAt = new Date();
+      createdAt.setHours(createdAt.getHours());
+
       await addDoc(collection(firestore, "articles"), {
         title,
         content,
         category,
         userId: user.uid,
-        createdAt: new Date(),
+        createdAt,
         likes: [],
       });
       setTitle("");
