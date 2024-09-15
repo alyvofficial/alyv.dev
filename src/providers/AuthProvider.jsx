@@ -26,10 +26,8 @@ const AuthProvider = (props) => {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authErrorMessages, setAuthErrorMessages] = useState();
-
   // eslint-disable-next-line react/prop-types
   const { children } = props;
-  
   const logoutFunction = useCallback(async () => {
     try {
       setAuthLoading(true);
@@ -64,11 +62,15 @@ const AuthProvider = (props) => {
           const docSnap = await getDoc(userDocRef);
 
           if (!docSnap.exists()) {
-            // Create new user document
-            const displayName = user.displayName || "NoName NoSurname"; 
+            // Kullanıcı adını ve soyadını ayırırken kontrol yapıyoruz
+            const displayName = user.displayName || "NoName";
+            const nameParts = displayName.split(" ");
+            const name = nameParts[0]; // İlk parça ismi alır
+            const surname = nameParts.length > 1 ? nameParts[1] : ""; // İkinci parça varsa soyadı alır, yoksa boş bırakır
+
             await setDoc(userDocRef, {
-              Name: displayName.split(" ")[0],
-              Surname: displayName.split(" ")[1], 
+              Name: name,
+              Surname: surname,
               email: user.email,
               photoUrl: user.photoURL || "",
               creationTime: new Date(user.metadata.creationTime).toLocaleString(
@@ -80,7 +82,7 @@ const AuthProvider = (props) => {
               ).toLocaleString("en-US", { timeZone: "Asia/Baku" }),
             });
           } else {
-            // Update lastSignInTime
+            // Son giriş zamanını günceller
             await setDoc(
               userDocRef,
               {
@@ -88,7 +90,7 @@ const AuthProvider = (props) => {
                   timeZone: "Asia/Baku",
                 }),
               },
-              { merge: true } // This ensures only lastSignInTime is updated
+              { merge: true } // Bu sadece lastSignInTime alanını günceller
             );
           }
 
@@ -99,9 +101,9 @@ const AuthProvider = (props) => {
         }
       });
 
-      return unsubscribe; 
+      return unsubscribe;
     }
-  }, [myAuth, myFS]); 
+  }, [myAuth, myFS]);
 
   const googleSignInFunction = async () => {
     try {
@@ -113,13 +115,15 @@ const AuthProvider = (props) => {
       const docSnap = await getDoc(userDocRef);
 
       if (!docSnap.exists()) {
-        const displayName = user.displayName || "NoName NoSurname";
-        const email = user.email;
+        const displayName = user.displayName || "NoName";
+        const nameParts = displayName.split(" ");
+        const name = nameParts[0];
+        const surname = nameParts.length > 1 ? nameParts[1] : ""; // Soyadı yoksa boş bırakılır
 
         const userDocData = {
-          Name: displayName.split(" ")[0],
-          Surname: displayName.split(" ")[1], 
-          email,
+          Name: name,
+          Surname: surname,
+          email: user.email,
           photoUrl: user.photoURL || "",
           creationTime: new Date(user.metadata.creationTime).toLocaleString(
             "en-US",
@@ -161,9 +165,7 @@ const AuthProvider = (props) => {
   };
 
   return (
-    <AuthContext.Provider value={theValues}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={theValues}>{children}</AuthContext.Provider>
   );
 };
 

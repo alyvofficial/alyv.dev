@@ -1,59 +1,53 @@
 import { useState } from "react";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { useAuthContext } from "../providers/AuthProvider";
-import {
-  collection,
-  addDoc,
-} from "firebase/firestore";
-
+import { collection, addDoc } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-
-
+import "react-quill/dist/quill.snow.css";
 
 export const AddArticleForm = () => {
-    const { user, firestore } = useAuthContext();
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [category, setCategory] = useState("");
+  const { user, firestore } = useAuthContext();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
 
-    const [categories] = useState([
-      "Proqramlaşdırma",
-      "Qrafik dizayn",
-      "İdman",
-      "Təhsil",
-      "Digər",
-    ]);
-    const modules = {
-      toolbar: [
-        [{ header: [1, 2, false] }],
-        ["bold", "italic", "underline", "strike", "blockquote"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["link", {color: []}, "image"],
-        [{ "code-block": true }],
-        ["clean"], [{ font: [] }]
-      ],
-    };
-    const formats = [
-      "header",
-      "bold",
-      "italic",
-      "underline",
-      "strike",
-      "blockquote",
-      "list",
-      "bullet",
-      "link",
-      "indent",
-      "image",
-      "code-block",
-      "color",
-      "font"
-    ];
+  const [categories] = useState([
+    "Proqramlaşdırma",
+    "Qrafik dizayn",
+    "İdman",
+    "Təhsil",
+    "Digər",
+  ]);
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", { color: [] }, "image"],
+      [{ "code-block": true }],
+      ["clean"],
+      [{ font: [] }],
+    ],
+  };
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "indent",
+    "image",
+    "code-block",
+    "color",
+    "font",
+  ];
 
-    const isAdmin = user && user.email === "alyvdev@gmail.com";
+  const isAdmin = user && user.email === "alyvdev@gmail.com";
 
   const addArticle = async (e) => {
     e.preventDefault();
@@ -87,11 +81,14 @@ export const AddArticleForm = () => {
   };
   return (
     <section className="p-5">
-      <ToastContainer position="top-center"  autoClose={2000}/>
+      <ToastContainer position="top-center" autoClose={2000} />
 
       {isAdmin && (
         <div className="h-full">
-          <form onSubmit={addArticle} className="space-y-4 h-full max-w-full ">
+          <form
+            onSubmit={addArticle}
+            className="space-y-4 h-full max-w-full border-black"
+          >
             <div>
               <input
                 type="text"
@@ -102,7 +99,7 @@ export const AddArticleForm = () => {
               />
             </div>
 
-            <div >
+            <div>
               <ReactQuill
                 value={content}
                 onChange={setContent}
@@ -139,5 +136,5 @@ export const AddArticleForm = () => {
         </div>
       )}
     </section>
-  )
-}
+  );
+};
