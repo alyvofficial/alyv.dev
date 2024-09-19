@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #ebebeb;
+    background-color: #000000;
     padding: 10px 20px;
     position: relative;
 }
@@ -20,7 +20,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background-color: white;
+    background-color: rgb(0, 0, 0);
+    color: white;
     border-radius: 10px;
     padding: 10px;
     gap: 8px;
@@ -53,10 +54,11 @@
 
 .profileName {
     font-size: 0.9rem;
+    font-weight: bold;
 }
 
 .logoutBtn {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     cursor: pointer;
 }
 
@@ -70,7 +72,12 @@
 .profileContainer.open .navbarUL {
     display: flex;
 }
-
+.loginContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
 
 
 

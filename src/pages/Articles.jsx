@@ -180,7 +180,7 @@ export const Articles = () => {
     });
 
   return (
-    <section className="p-6 flex flex-col w-full">
+    <section className="p-6 flex flex-col w-full min-h-screen overflow-y-auto">
       <ToastContainer position="top-center" autoClose={2000} />
       <input
         type="text"

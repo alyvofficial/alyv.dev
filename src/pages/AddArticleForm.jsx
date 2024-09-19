@@ -83,7 +83,7 @@ export const AddArticleForm = () => {
     }
   };
   return (
-    <section className="p-5">
+    <section className="p-5 min-h-screen overflow-y-auto">
       <ToastContainer position="top-center" autoClose={2000} />
 
       {isAdmin && (

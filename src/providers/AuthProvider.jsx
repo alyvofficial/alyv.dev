@@ -6,11 +6,13 @@ import {
   useEffect,
   useState,
 } from "react";
+import PropTypes from "prop-types";
 import {
   onAuthStateChanged,
   signOut,
   GoogleAuthProvider,
   signInWithPopup,
+  GithubAuthProvider,
 } from "firebase/auth";
 import { doc, getDoc, setDoc, getFirestore } from "firebase/firestore";
 import { useFirebaseContext } from "./FirebaseProvider";
@@ -26,8 +28,8 @@ const AuthProvider = (props) => {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authErrorMessages, setAuthErrorMessages] = useState();
-  // eslint-disable-next-line react/prop-types
   const { children } = props;
+
   const logoutFunction = useCallback(async () => {
     try {
       setAuthLoading(true);
@@ -62,11 +64,10 @@ const AuthProvider = (props) => {
           const docSnap = await getDoc(userDocRef);
 
           if (!docSnap.exists()) {
-            // Kullanıcı adını ve soyadını ayırırken kontrol yapıyoruz
             const displayName = user.displayName || "NoName";
             const nameParts = displayName.split(" ");
-            const name = nameParts[0]; // İlk parça ismi alır
-            const surname = nameParts.length > 1 ? nameParts[1] : ""; // İkinci parça varsa soyadı alır, yoksa boş bırakır
+            const name = nameParts[0];
+            const surname = nameParts.length > 1 ? nameParts[1] : "";
 
             await setDoc(userDocRef, {
               Name: name,
@@ -82,7 +83,6 @@ const AuthProvider = (props) => {
               ).toLocaleString("en-US", { timeZone: "Asia/Baku" }),
             });
           } else {
-            // Son giriş zamanını günceller
             await setDoc(
               userDocRef,
               {
@@ -90,7 +90,7 @@ const AuthProvider = (props) => {
                   timeZone: "Asia/Baku",
                 }),
               },
-              { merge: true } // Bu sadece lastSignInTime alanını günceller
+              { merge: true }
             );
           }
 
@@ -118,7 +118,7 @@ const AuthProvider = (props) => {
         const displayName = user.displayName || "NoName";
         const nameParts = displayName.split(" ");
         const name = nameParts[0];
-        const surname = nameParts.length > 1 ? nameParts[1] : ""; // Soyadı yoksa boş bırakılır
+        const surname = nameParts.length > 1 ? nameParts[1] : "";
 
         const userDocData = {
           Name: name,
@@ -147,10 +147,74 @@ const AuthProvider = (props) => {
     }
   };
 
+  const githubSignInFunction = async () => {
+    try {
+      const provider = new GithubAuthProvider();
+      const result = await signInWithPopup(myAuth, provider);
+      const user = result.user;
+
+      const userDocRef = doc(myFS, PROFILE_COLLECTION, user.uid);
+      const docSnap = await getDoc(userDocRef);
+
+      if (!docSnap.exists()) {
+        const displayName = user.displayName || "NoName";
+        const nameParts = displayName.split(" ");
+        const name = nameParts[0];
+        const surname = nameParts.length > 1 ? nameParts[1] : "";
+
+        const userDocData = {
+          Name: name,
+          Surname: surname,
+          email: user.email,
+          photoUrl: user.photoURL || "",
+          creationTime: new Date(user.metadata.creationTime).toLocaleString(
+            "en-US",
+            { timeZone: "Asia/Baku" }
+          ),
+          lastSignInTime: new Date(user.metadata.lastSignInTime).toLocaleString(
+            "en-US",
+            { timeZone: "Asia/Baku" }
+          ),
+        };
+
+        await setDoc(userDocRef, userDocData);
+      }
+
+      setUser(user);
+      return true;
+    } catch (ex) {
+      console.error(`GitHub sign-in failed: ${ex.message}`);
+      setAuthErrorMessages([ex.message]);
+      return false;
+    }
+  };
+
   if (authLoading) {
     return (
-      <div className="w-full h-screen flex items-center justify-center">
-        User loading...
+      <div className="w-full h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <svg
+            className="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p className="text-lg text-gray-700">User loading...</p>
+        </div>
       </div>
     );
   }
@@ -161,12 +225,16 @@ const AuthProvider = (props) => {
     user,
     logout: logoutFunction,
     googleSignIn: googleSignInFunction,
+    githubSignIn: githubSignInFunction, // Add GitHub sign-in to the context
     firestore,
   };
 
   return (
     <AuthContext.Provider value={theValues}>{children}</AuthContext.Provider>
   );
+};
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 const useAuthContext = () => {
@@ -178,6 +246,7 @@ const useAuthContext = () => {
 
   return context;
 };
+
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { AuthProvider, useAuthContext };
