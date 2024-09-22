@@ -1,11 +1,9 @@
 import { useState } from "react";
-import styles from "./Header.module.css";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "../../providers/AuthProvider";
 import { FaGoogle, FaGithub } from "react-icons/fa";
-
 
 export const Header = () => {
   const { googleSignIn, user, logout, githubSignIn } = useAuthContext();
@@ -14,9 +12,10 @@ export const Header = () => {
   const handleProfileClick = () => {
     setMenuOpen(!menuOpen);
   };
+
   return (
-    <header className={styles.header}>
-      <NavLink className={styles.logoHolder} to={"/"}>
+    <header className="w-full h-[13vh] flex items-center justify-between bg-black px-5 relative">
+      <NavLink className="w-12" to={"/"}>
         <svg
           id="Layer_1"
           data-name="Layer 1"
@@ -44,7 +43,7 @@ export const Header = () => {
         </svg>
       </NavLink>
       {!user ? (
-        <div className={styles.loginContainer}>
+        <div className="flex items-center justify-between gap-1">
           <button
             onClick={googleSignIn}
             aria-label="Sign in with Google"
@@ -54,11 +53,10 @@ export const Header = () => {
               <FaGoogle className="w-6 h-6 text-white" />
             </div>
           </button>
-
           <button
             onClick={githubSignIn}
             aria-label="Sign in with GitHub"
-            className="flex items-center justify-centerrounded-full ml-2"
+            className="flex items-center justify-center rounded-full ml-2"
           >
             <div className="flex items-center justify-center rounded-full">
               <FaGithub className="w-6 h-6 text-white" />
@@ -66,43 +64,43 @@ export const Header = () => {
           </button>
         </div>
       ) : (
-        <div
-          className={`${styles.profileContainer} ${
-            menuOpen ? styles.open : ""
-          }`}
-          onClick={handleProfileClick}
-        >
-          <div className={styles.profileContainerFirst}>
-            <div className={styles.profileImage}>
+        <div className="relative">
+          <div
+            className="flex items-center justify-between p-1.5 gap-2.5 cursor-pointer rounded-lg"
+            onClick={handleProfileClick}
+          >
+            <div className="w-10 h-10">
               <img
-                className={styles.profileURL}
+                className="rounded-full"
                 src={user.photoURL}
-                alt={user.displayName}
+                alt="Profile"
               />
             </div>
-            <h4 className={styles.profileName}>{user.displayName}</h4>
+            <h4 className="text-sm font-bold text-white">{user.displayName}</h4>
             <FontAwesomeIcon
-              className={styles.logoutBtn}
+              className="text-lg cursor-pointer text-white"
               icon={faRightFromBracket}
               onClick={logout}
             />
           </div>
-          <ul className={styles.navbarUL}>
-            <NavLink to="/articles" className={styles.navbarLink}>
-              <li className={styles.navbarLI}>Məqalələr</li>
-            </NavLink>
-            <NavLink to="/portfolio" className={styles.navbarLink}>
-              <li className={styles.navbarLI}>Portfolio</li>
-            </NavLink>
-            <NavLink to="/contact" className={styles.navbarLink}>
-              <li className={styles.navbarLI}>Əlaqə</li>
-            </NavLink>
-            {user && user.email === "alyvdev@gmail.com" && (
-              <NavLink to="/add-article" className={styles.navbarLink}>
-                <li className={styles.navbarLI}>Əlavə et</li>
+          {menuOpen && (
+            <ul className="absolute right-0 w-40 p-1.5 rounded-lg z-[999] bg-black">
+              <NavLink to="/articles" className="text-gray-500 hover:text-white">
+                <li className="list-none">Məqalələr</li>
               </NavLink>
-            )}
-          </ul>
+              <NavLink to="/portfolio" className="text-gray-500 hover:text-white">
+                <li className="list-none">Portfolio</li>
+              </NavLink>
+              <NavLink to="/contact" className="text-gray-500 hover:text-white">
+                <li className="list-none">Əlaqə</li>
+              </NavLink>
+              {user && user.email === "alyvdev@gmail.com" && (
+                <NavLink to="/add-article" className="text-gray-500 hover:text-white">
+                  <li className="list-none">Əlavə et</li>
+                </NavLink>
+              )}
+            </ul>
+          )}
         </div>
       )}
     </header>

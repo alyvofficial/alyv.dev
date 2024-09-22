@@ -4,7 +4,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'lexend': ['Lexend', 'sans-serif'],
+      },
+    },
     screens: {
       'sm': '100px',
       'md': '768px',

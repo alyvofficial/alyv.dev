@@ -1,16 +1,17 @@
-import { useState } from "react";
-import ReactQuill from "react-quill";
+import { useState, useRef, useMemo } from "react";
 import { useAuthContext } from "../providers/AuthProvider";
 import { collection, addDoc } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "react-quill/dist/quill.snow.css";
+import "jodit";
+import JoditEditor from "jodit-react";
 
 export const AddArticleForm = () => {
   const { user, firestore } = useAuthContext();
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
+  const editorRef = useRef(null);
+  const [content, setContent] = useState(""); // Create a ref for JoditEditor instance
 
   const [categories] = useState([
     "Proqramlaşdırma",
@@ -19,35 +20,16 @@ export const AddArticleForm = () => {
     "Təhsil",
     "Digər",
   ]);
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", { color: [] }, "image"],
-      [{ "code-block": true }],
-      ["clean"],
-      [{ font: [] }],
-    ],
-  };
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "link",
-    "indent",
-    "image",
-    "code-block",
-    "color",
-    "font",
-  ];
 
   const isAdmin = user && user.email === "alyvdev@gmail.com";
+
+  const config = useMemo(() => {
+    return {
+      readonly: false,
+      height: "500px",
+      uploader: { insertImageAsBase64URI: true },
+    };
+  }, []);
 
   const addArticle = async (e) => {
     e.preventDefault();
@@ -55,6 +37,9 @@ export const AddArticleForm = () => {
       toast.error("Məqalə əlavə etmək üçün admin olmalısınız.");
       return;
     }
+
+    // Get content directly from the editor using ref
+    const content = editorRef.current.value;
 
     if (!title || !content || !category) {
       toast.error("Zəhmət olmasa, bütün boş xanaları doldurun!");
@@ -67,26 +52,27 @@ export const AddArticleForm = () => {
 
       await addDoc(collection(firestore, "articles"), {
         title,
-        content,
+        content, // Set content from the editor value
         category,
         userId: user.uid,
         createdAt,
         likes: [],
       });
       setTitle("");
-      setContent("");
       setCategory("");
+      setContent("");
       toast.success("Məqalə uğurla əlavə olundu!");
     } catch (error) {
       console.error("Məqalə əlavə edilərkən xəta baş verdi: ", error);
       toast.error("Məqalə əlavə oluna bilmədi!");
     }
   };
+
   return (
     <section className="p-5 min-h-screen overflow-y-auto">
       <ToastContainer position="top-center" autoClose={2000} />
 
-      {isAdmin && (
+      {isAdmin ? (
         <div className="h-full">
           <form
             onSubmit={addArticle}
@@ -103,14 +89,15 @@ export const AddArticleForm = () => {
             </div>
 
             <div>
-              <ReactQuill
+              {/* Initialize JoditEditor with the ref */}
+              <JoditEditor
+                ref={editorRef}
                 value={content}
-                onChange={setContent}
-                className="w-full p-2 border border-gray-300 rounded"
-                placeholder="Məzmun"
-                theme="snow"
-                modules={modules}
-                formats={formats}
+                config={config}
+                onBlur={(newContent) => setContent(newContent)}
+                onChange={(newContent) => {
+                  setContent(newContent);
+                }}
               />
             </div>
 
@@ -137,6 +124,8 @@ export const AddArticleForm = () => {
             </button>
           </form>
         </div>
+      ) : (
+        <p>Yalnız adminlər məqalə əlavə edə bilər.</p>
       )}
     </section>
   );

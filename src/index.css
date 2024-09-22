@@ -9,7 +9,7 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: Lexend !important;
+    font-family: Lexend;
 }
 html, body {
     scroll-behavior: smooth;
@@ -22,7 +22,17 @@ html, body {
 }
 ul {
     list-style: initial;
+    margin-left: 35px;
 }
 ol {
-    list-style: decimal;
+    list-style: number;
+    margin-left: 35px;
+}
+@media (max-width: 768px) {
+    ul {
+        margin-left: 25px;
+    }
+    ol {
+        margin-left: 25px;
+    }
 }
