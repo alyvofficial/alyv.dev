@@ -382,7 +382,7 @@ export const Articles = () => {
           <p>Məqalə yoxdur.</p>
         ) : (
           // Kullanıcı giriş yapmamışsa
-          <p>Məqalələri görmək üçün Google hesabı ilə giriş edin.</p>
+          <p>Məqalələri görmək üçün zəhmət olmasa giriş edin.</p>
         )}
       </div>
     </section>
