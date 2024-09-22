@@ -13,9 +13,13 @@ export const Header = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const handleNavLinkClick = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <header className="w-full h-[13vh] flex items-center justify-between bg-black px-5 relative">
-      <NavLink className="w-12" to={"/"}>
+      <NavLink className="w-12" to={"/"} onClick={handleNavLinkClick}>
         <svg
           id="Layer_1"
           data-name="Layer 1"
@@ -85,17 +89,17 @@ export const Header = () => {
           </div>
           {menuOpen && (
             <ul className="absolute right-0 w-40 p-1.5 rounded-lg z-[999] bg-black">
-              <NavLink to="/articles" className="text-gray-500 hover:text-white">
+              <NavLink to="/articles" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
                 <li className="list-none">Məqalələr</li>
               </NavLink>
-              <NavLink to="/portfolio" className="text-gray-500 hover:text-white">
+              <NavLink to="/portfolio" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
                 <li className="list-none">Portfolio</li>
               </NavLink>
-              <NavLink to="/contact" className="text-gray-500 hover:text-white">
+              <NavLink to="/contact" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
                 <li className="list-none">Əlaqə</li>
               </NavLink>
               {user && user.email === "alyvdev@gmail.com" && (
-                <NavLink to="/add-article" className="text-gray-500 hover:text-white">
+                <NavLink to="/add-article" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
                   <li className="list-none">Əlavə et</li>
                 </NavLink>
               )}

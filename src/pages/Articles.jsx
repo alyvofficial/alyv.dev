@@ -178,7 +178,7 @@ export const Articles = () => {
     });
 
   return (
-    <section className="w-screen p-5 flex flex-col  min-h-screen overflow-y-auto">
+    <section className=" p-5 flex flex-col  min-h-screen overflow-y-auto">
       {/* Toast bildirimlerini göstermek için ToastContainer */}
       <ToastContainer position="top-center" autoClose={2000} />
 
