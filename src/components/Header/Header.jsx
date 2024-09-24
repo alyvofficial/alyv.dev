@@ -96,7 +96,7 @@ export const Header = () => {
                 <li className="list-none">Portfolio</li>
               </NavLink>
               <NavLink to="/about" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
-                <li className="list-none">Haqqımda</li>
+                <li className="list-none">ALYV Dev</li>
               </NavLink>
               {user && user.email === "alyvdev@gmail.com" && (
                 <NavLink to="/add-article" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
