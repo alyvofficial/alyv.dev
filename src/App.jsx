@@ -8,6 +8,7 @@ import { AddArticleForm } from "./pages/AddArticleForm";
 import { Footer } from "./components/Footer/Footer";
 import { About } from "./pages/About";
 import { Portfolio } from "./pages/Portfolio";
+import { ArticlesDetails } from "./pages/ArticlesDetails";
 function App() {
   return (
     <FirebaseProvider>
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/articles" element={<Articles />} />
+            <Route path="/articles/:id" element={<ArticlesDetails />} />
             <Route path="/add-article" element={<AddArticleForm />} /> 
             <Route path="/about" element={<About />} /> 
             <Route path="/portfolio" element={<Portfolio />} /> 

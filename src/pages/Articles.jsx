@@ -16,12 +16,13 @@ import hljs from "highlight.js";
 import "./Highlight.css";
 import "jodit";
 import JoditEditor from "jodit-react";
+import { NavLink } from "react-router-dom";
+import { BiLike, BiSolidLike } from "react-icons/bi";
 
 export const Articles = () => {
   const editorRef = useRef(null);
   const { user, firestore } = useAuthContext();
   const [articles, setArticles] = useState([]);
-  const [selectedArticle, setSelectedArticle] = useState(null);
   const [editArticleId, setEditArticleId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
@@ -50,30 +51,40 @@ export const Articles = () => {
   const fetchArticlesFromFirestore = () => {
     setLoading(true);
 
-    // İlk olarak yerel depolamayı kontrol ediyoruz
-    const localArticles = JSON.parse(localStorage.getItem("articles"));
-    if (localArticles) {
-      // Eğer yerel depolamada makaleler varsa, bunları hemen state'e koyuyoruz
+    // LocalStorage'den verileri kontrol edip, makaleleri ID bazlı alıyoruz
+    const localArticles = [];
+    const localStorageKeys = Object.keys(localStorage);
+
+    localStorageKeys.forEach((key) => {
+      if (key.startsWith("article_")) {
+        const storedArticle = JSON.parse(localStorage.getItem(key));
+        localArticles.push(storedArticle);
+      }
+    });
+
+    if (localArticles.length > 0) {
       setArticles(localArticles);
       setLoading(false);
     }
 
-    // Ardından Firebase'den gerçek zamanlı olarak makaleleri çekmeye devam ediyoruz
+    // Firebase'den gerçek zamanlı verileri alıyoruz
     const articlesRef = collection(firestore, "articles");
-
     const unsubscribe = onSnapshot(articlesRef, (querySnapshot) => {
       const articlesList = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      // Firebase'den gelen veriler yerel depolamaya kaydediliyor ve state güncelleniyor
+      // Gelen her makale için localStorage'a kaydediyoruz
+      articlesList.forEach((article) => {
+        localStorage.setItem(`article_${article.id}`, JSON.stringify(article));
+      });
+
       setArticles(articlesList);
-      localStorage.setItem("articles", JSON.stringify(articlesList)); // LocalStorage'a yazılıyor
       setLoading(false);
     });
 
-    return () => unsubscribe(); // Bileşen unmount olduğunda dinlemeyi durduruyoruz
+    return () => unsubscribe(); // Temizlik işlemi
   };
 
   const deleteArticle = async (id) => {
@@ -186,15 +197,35 @@ export const Articles = () => {
       {loading && <div className="text-center text-gray-500">Yüklənir...</div>}
 
       {/* Arama ve filtreleme seçeneklerini içeren bölüm */}
-      <div className="flex sm:flex-col sm:items-start items-center gap-3 mb-4">
+      <div className="flex sm:flex-col lg:flex-row-reverse sm:items-start lg:items-center lg:justify-between gap-3 mb-4">
         {/* Arama kutusu */}
-        <input
-          type="text"
-          placeholder="Axtarışa başlayın..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="p-2 border border-gray-300 h-auto rounded w-48 focus:outline-none"
-        />
+        <div className="relative">
+          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <svg
+              className="w-4 h-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+              />
+            </svg>
+          </div>
+          <input
+            type="search"
+            id="default-search"
+            className="block w-full p-1 ps-10 text-sm  focus:outline-none border border-gray-500 rounded-lg "
+            placeholder="Axtarışa başlayın..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
         {/* Sıralama ve kategori seçimi */}
         <div className="w-auto flex">
@@ -203,7 +234,7 @@ export const Articles = () => {
             id="sortOrder"
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            className="p-2 mr-2 border border-gray-300 rounded focus:outline-none"
+            className="p-1 mr-2 border border-gray-300 rounded-lg focus:outline-none"
           >
             <option value="newest">Yenilər</option>
             <option value="oldest">Köhnələr</option>
@@ -216,7 +247,7 @@ export const Articles = () => {
             id="category"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="p-2 border border-gray-300 rounded focus:outline-none"
+            className="p-1 border border-gray-300 rounded-lg focus:outline-none"
           >
             <option value="all">Hamısı</option>
             {categories.map((category) => (
@@ -234,22 +265,15 @@ export const Articles = () => {
           filteredAndSortedArticles.map((article) => (
             <div
               key={article.id}
-              className={`p-2 border border-gray-300 rounded relative w-full${
+              className={`p-2 border-2 border-gray-200 rounded-xl relative w-full${
                 editArticleId === article.id ? "bg-gray-100" : ""
               }`}
             >
               {/* Makale başlığı */}
-              <h3
-                onClick={() => {
-                  if (editArticleId !== article.id) {
-                    setSelectedArticle(
-                      selectedArticle?.id === article.id ? null : article
-                    );
-                  }
-                }}
-                className="text-lg sm:mr-5 lg:mr-0 font-semibold cursor-pointer hover:text-blue-500"
-              >
-                {article.title}
+              <h3 className="text-lg sm:mr-5 lg:mr-0 font-semibold cursor-pointer hover:text-blue-500">
+                <NavLink to={`/articles/${article.id}`}>
+                  {article.title}
+                </NavLink>
               </h3>
 
               {/* Makale kategorisi */}
@@ -266,43 +290,20 @@ export const Articles = () => {
                 )}
               </p>
 
-              {/* Makale içeriği (başlık tıklanmışsa gösterilir) */}
-              {selectedArticle?.id === article.id &&
-                editArticleId !== article.id && (
-                  <div className="w-full max-w-full overflow-hidden break-words sm:p-2 bg-gray-50 mb-1">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: article.content }}
-                    ></div>
-                  </div>
-                )}
-
               {/* Beğen butonu */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleLike(article.id);
                 }}
-                className={`absolute top-2 right-2 ${
-                  article.likes.includes(user.uid)
-                    ? "text-red-500"
-                    : "text-gray-400"
-                }`}
+                className="absolute top-2 right-2"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
-                <span className="ml-1">{article.likes.length}</span>{" "}
+                {article.likes.includes(user.uid) ? (
+                  <BiSolidLike className="text-blue-500 h-6 w-6" />
+                ) : (
+                  <BiLike className="text-gray-400 h-6 w-6" />
+                )}
+                <span className="ml-1">{article.likes.length}</span>
               </button>
 
               {/* Makale düzenleme ve silme butonları (kullanıcı yetkiliyse gösterilir) */}

@@ -11,7 +11,7 @@ export const AddArticleForm = () => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const editorRef = useRef(null);
-  const [content, setContent] = useState(""); // Create a ref for JoditEditor instance
+  const [content, setContent] = useState("");
 
   const [categories] = useState([
     "Proqramlaşdırma",
@@ -38,7 +38,6 @@ export const AddArticleForm = () => {
       return;
     }
 
-    // Get content directly from the editor using ref
     const content = editorRef.current.value;
 
     if (!title || !content || !category) {
@@ -48,16 +47,18 @@ export const AddArticleForm = () => {
 
     try {
       const createdAt = new Date();
-      createdAt.setHours(createdAt.getHours());
 
-      await addDoc(collection(firestore, "articles"), {
+      // Firestore'da makale ekle
+      const docRef = await addDoc(collection(firestore, "articles"), {
         title,
-        content, // Set content from the editor value
+        content,
         category,
         userId: user.uid,
         createdAt,
         likes: [],
       });
+
+      console.log("Məqalə əlavə olundu, ID:", docRef.id); // Eklenen belgenin ID'sini konsola yazdır
       setTitle("");
       setCategory("");
       setContent("");
@@ -89,7 +90,6 @@ export const AddArticleForm = () => {
             </div>
 
             <div>
-              {/* Initialize JoditEditor with the ref */}
               <JoditEditor
                 ref={editorRef}
                 value={content}

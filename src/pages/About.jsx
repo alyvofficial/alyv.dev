@@ -7,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css';
 export const About = () => {
   const form = useRef();
   const { user } = useAuthContext();
-  console.log(user)
 
   const sendEmail = (e) => {
     e.preventDefault();
