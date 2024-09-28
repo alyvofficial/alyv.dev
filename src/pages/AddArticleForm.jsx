@@ -58,7 +58,7 @@ export const AddArticleForm = () => {
         likes: [],
       });
 
-      console.log("Məqalə əlavə olundu, ID:", docRef.id); // Eklenen belgenin ID'sini konsola yazdır
+      console.log("Məqalə əlavə olundu, ID:", docRef.id);
       setTitle("");
       setCategory("");
       setContent("");

@@ -5,10 +5,9 @@ import { Home } from "./pages/Home";
 import { Header } from "./components/Header/Header";
 import { Articles } from "./pages/Articles";
 import { AddArticleForm } from "./pages/AddArticleForm";
-import { Footer } from "./components/Footer/Footer";
-import { About } from "./pages/About";
 import { Portfolio } from "./pages/Portfolio";
 import { ArticlesDetails } from "./pages/ArticlesDetails";
+import { LoginPage } from "./pages/LoginPage";
 function App() {
   return (
     <FirebaseProvider>
@@ -20,10 +19,9 @@ function App() {
             <Route path="/articles" element={<Articles />} />
             <Route path="/articles/:id" element={<ArticlesDetails />} />
             <Route path="/add-article" element={<AddArticleForm />} /> 
-            <Route path="/about" element={<About />} /> 
             <Route path="/portfolio" element={<Portfolio />} /> 
+            <Route path="/auth/login" element={<LoginPage />} /> 
           </Routes>
-          <Footer/>
         </BrowserRouter>
       </AuthProvider>
     </FirebaseProvider>

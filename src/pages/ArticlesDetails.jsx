@@ -84,7 +84,7 @@ export const ArticlesDetails = () => {
   const handleShare = () => {
     const shareData = {
       title: article.title,
-      text: "Bu məqaləyə baxın!",
+      text: "Buna mütləq baxmalısan!",
       url: window.location.href,
     };
 

@@ -3,6 +3,7 @@ import emailjs from '@emailjs/browser';
 import { useAuthContext } from "../providers/AuthProvider";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaGithub, FaInstagram, FaLinkedin, FaBehance } from 'react-icons/fa';
 
 export const About = () => {
   const form = useRef();
@@ -159,42 +160,20 @@ export const About = () => {
                 <p className="text-sm">English B2 level</p>
               </div>
             </div>
-            <div className="mt-8">
-              <h2 className="text-xl font-bold text-[#64ffda] mb-4">
-                PORTFOLIO
-              </h2>
-              <div className="mb-2">
-                <p>GitHub</p>
-                <a
-                  href="https://github.com/alyvofficial"
-                  className="text-gray-400 hover:text-white"
-                >
-                  https://github.com/alyvofficial
+              <div className="mt-8">
+              <h2 className="text-xl font-bold text-[#64ffda] mb-4">SOSİAL ŞƏBƏKƏLƏR</h2>
+              <div className="flex space-x-4">
+                <a href="https://github.com/alyvofficial" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#64ffda]">
+                <FaGithub size={20} />
                 </a>
-              </div>
-              <div className="mb-2">
-                <p>Instagram</p>
-                <a
-                  href="https://instagram.com/alyvdev"
-                  className="text-gray-400 hover:text-white"
-                >
-                  https://instagram.com/alyvdev
+                <a href="https://instagram.com/alyvdev" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#64ffda]">
+                <FaInstagram size={20} />
                 </a>
-                <br />
-                <a
-                  href="https://instagram.com/alyvdesign"
-                  className="text-gray-400 hover:text-white"
-                >
-                  https://instagram.com/alyvdesign
+                <a href="https://behance.net/alyvdesign" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#64ffda]">
+                <FaBehance size={20} />
                 </a>
-              </div>
-              <div>
-                <p>Behance</p>
-                <a
-                  href="https://behance.net/alyvdesign"
-                  className="text-gray-400 hover:text-white"
-                >
-                  https://behance.net/alyvdesign
+                <a href="https://linkedin.com/in/alyvofficial" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#64ffda]">
+                <FaLinkedin size={20} />
                 </a>
               </div>
             </div>
