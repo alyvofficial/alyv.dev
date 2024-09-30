@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuthContext } from "../providers/AuthProvider";
 import {
@@ -13,72 +12,73 @@ import "react-toastify/dist/ReactToastify.css";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { IoShareOutline, IoArrowBack } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import { FaComments } from "react-icons/fa";
+import { Comments } from "./Comments";
+
+// Firestore'dan makale verisini çekmek için fonksiyon
+const fetchArticle = async (firestore, id) => {
+  const docRef = doc(firestore, "articles", id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    return { id: docSnap.id, ...docSnap.data() };
+  } else {
+    throw new Error("Məqalə tapılmadı!");
+  }
+};
+
+// Beğeni toggle işlemi için fonksiyon
+const toggleLike = async ({ firestore, articleId, user, likes }) => {
+  const articleRef = doc(firestore, "articles", articleId);
+  if (likes.includes(user.uid)) {
+    await updateDoc(articleRef, {
+      likes: arrayRemove(user.uid),
+    });
+  } else {
+    await updateDoc(articleRef, {
+      likes: arrayUnion(user.uid),
+    });
+  }
+};
+
 
 export const ArticlesDetails = () => {
   const { id } = useParams();
   const { user, firestore } = useAuthContext();
-  const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchArticle = async () => {
-    try {
-      const cachedArticle = localStorage.getItem(`article_${id}`);
-      if (cachedArticle) {
-        // If article is found in local storage, use it
-        setArticle(JSON.parse(cachedArticle));
-      } else {
-        // If not found, fetch from Firestore
-        const docRef = doc(firestore, "articles", id);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const fetchedArticle = { id: docSnap.id, ...docSnap.data() };
-          setArticle(fetchedArticle);
-          localStorage.setItem(`article_${id}`, JSON.stringify(fetchedArticle)); // Cache it
-        } else {
-          toast.error("Məqalə tapılmadı!");
-        }
-      }
-    } catch (error) {
-      toast.error("Məqaləyi yükləyə bilmədik!");
-    } finally {
-      setLoading(false);
+  // Firestore'dan makaleyi çek
+  const { data: article, isLoading } = useQuery(
+    ["article", id],
+    () => fetchArticle(firestore, id),
+    {
+      staleTime: 60000, // 1 dakika cache
+      onError: (error) => toast.error(error.message),
     }
-  };
+  );
 
-  const toggleLike = async () => {
+  // Beğeni işlevi için mutation kullan
+  const mutation = useMutation(toggleLike, {
+    onSuccess: () => {
+      // Cache'i güncelle
+      queryClient.invalidateQueries(["article", id]);
+    },
+    onError: () => {
+      toast.error("Bəyənmək baş tutmadı!");
+    },
+  });
+
+  const handleLike = () => {
     if (!user) {
       toast.error("Zəhmət olmasa, öncə giriş edin!");
       return;
     }
-
-    try {
-      const articleRef = doc(firestore, "articles", article.id);
-
-      if (article.likes.includes(user.uid)) {
-        await updateDoc(articleRef, {
-          likes: arrayRemove(user.uid),
-        });
-      } else {
-        await updateDoc(articleRef, {
-          likes: arrayUnion(user.uid),
-        });
-      }
-
-      // Fetch updated article and update localStorage
-      const docSnap = await getDoc(articleRef);
-      if (docSnap.exists()) {
-        const updatedArticle = { id: docSnap.id, ...docSnap.data() };
-        setArticle(updatedArticle);
-        localStorage.setItem(
-          `article_${article.id}`,
-          JSON.stringify(updatedArticle)
-        );
-      }
-    } catch (error) {
-      console.error("Bəyənmək baş tutmadı:", error);
-      toast.error("Bəyənmək baş tutmadı!");
-    }
+    mutation.mutate({
+      firestore,
+      articleId: article.id,
+      user,
+      likes: article.likes,
+    });
   };
 
   const handleShare = () => {
@@ -104,20 +104,52 @@ export const ArticlesDetails = () => {
     }
   };
 
-  useEffect(() => {
-    fetchArticle();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  if (loading) {
-    return <div className="text-center text-gray-500">Yüklənir...</div>;
+  if (isLoading) {
+    return (
+      <div className="w-full h-[90vh] flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <svg
+            className="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <section className="min-h-screen">
+    <section className="">
       <ToastContainer position="top-center" autoClose={2000} />
       {!user ? (
-        <p>Məqalələri görmək üçün zəhmət olmasa giriş edin.</p>
+        <div className="p-4 flex justify-center items-center h-[85vh] w-full">
+          <div className="bg-zinc-100 p-9 rounded-lg shadow-lg flex items-center flex-col gap-2">
+            <p className="text-lg text-center">
+              Məqalələri oxumaq üçün zəhmət olmasa giriş edin.
+            </p>
+            <NavLink
+              to="/auth/login"
+              className="bg-black text-white py-2 px-4 rounded-lg"
+            >
+              Daxil ol
+            </NavLink>
+          </div>
+        </div>
       ) : article ? (
         <div className="p-4">
           <div className="w-full py-4 flex items-center justify-between text-gray-500">
@@ -137,21 +169,24 @@ export const ArticlesDetails = () => {
           <div className="min-h-screen">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-2xl font-semibold">{article.title}</h2>
-              <div className="flex">
+              <div className="flex gap-2 text-blue-500">
                 {/* Beğen butonu */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleLike(article.id);
+                    handleLike();
                   }}
-                  className=""
                 >
                   {article.likes.includes(user.uid) ? (
                     <BiSolidLike className="text-blue-500 h-6 w-6" />
                   ) : (
                     <BiLike className="text-gray-400 h-6 w-6" />
                   )}
+                  <span className="ml-1">{article.likes.length}</span>
                 </button>
+                <a href="#comments">
+                  <FaComments className="h-6 w-6" />
+                </a>
               </div>
             </div>
             <p className="text-sm text-gray-500">
@@ -163,9 +198,24 @@ export const ArticlesDetails = () => {
             />
             <div className="flex items-center mt-4"></div>
           </div>
+          <hr />
+          <Comments articleId={article.id} />
+
         </div>
       ) : (
-        <p>Məqalə tapılmadı.</p>
+        <div className="p-4 flex justify-center items-center h-[85vh] w-full">
+          <div className="bg-zinc-100 p-9 rounded-lg shadow-lg flex items-center flex-col gap-2">
+            <p className="text-lg text-center">
+              Məqalələri oxumaq üçün zəhmət olmasa giriş edin.
+            </p>
+            <NavLink
+              to="/auth/login"
+              className="bg-black text-white py-2 px-4 rounded-lg"
+            >
+              Daxil ol
+            </NavLink>
+          </div>
+        </div>
       )}
     </section>
   );

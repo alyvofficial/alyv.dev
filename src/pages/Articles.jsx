@@ -14,12 +14,13 @@ import hljs from "highlight.js";
 import "./Highlight.css";
 import "jodit";
 import JoditEditor from "jodit-react";
-import { NavLink } from "react-router-dom";
-import { BiLike, BiSolidLike } from "react-icons/bi";
 import { useQuery, useQueryClient } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export const Articles = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const editorRef = useRef(null);
   const { user, firestore } = useAuthContext();
   const [editArticleId, setEditArticleId] = useState(null);
@@ -113,32 +114,11 @@ export const Articles = () => {
     }
   };
 
-  // Beğenme işlemi
-  const toggleLike = async (articleId) => {
-    const article = articles.find((article) => article.id === articleId);
-    const updatedLikes = article.likes.includes(user.uid)
-      ? article.likes.filter((uid) => uid !== user.uid)
-      : [...article.likes, user.uid];
-
-    try {
-      const articleRef = doc(firestore, "articles", articleId);
-      // Update Firestore
-      await updateDoc(articleRef, {
-        likes: updatedLikes,
-      });
-
-      // Update local cache
-      queryClient.setQueryData(["articles"], (oldArticles) =>
-        oldArticles.map((article) =>
-          article.id === articleId
-            ? { ...article, likes: updatedLikes }
-            : article
-        )
-      );
-    } catch (error) {
-      console.error("Bəyənmək baş tutmadı:", error);
-      toast.error("Bəyənmək baş tutmadı!");
-    }
+  const getPreview = (content) => {
+    const textContent = content.replace(/<[^>]*>/g, "");
+    return textContent.length > 150
+      ? `${textContent.substring(0, 100)}...`
+      : textContent;
   };
 
   // Kod vurgulama
@@ -203,6 +183,7 @@ export const Articles = () => {
           </div>
         </div>
       )}
+
       {user && (
         <div className="flex sm:flex-col lg:flex-row-reverse sm:items-start lg:items-center lg:justify-between gap-3 mb-4">
           <div className="relative">
@@ -226,7 +207,7 @@ export const Articles = () => {
             <input
               type="search"
               id="default-search"
-              className="block w-full p-1 ps-10 text-sm  focus:outline-none border border-gray-500 rounded-lg "
+              className="block w-full p-1 ps-10 text-sm focus:outline-none border border-gray-500 rounded-lg"
               placeholder="Axtarışa başlayın..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -265,19 +246,18 @@ export const Articles = () => {
         </div>
       )}
 
-      <div className="gap-2 flex flex-col">
+      <div className="flex flex-wrap gap-4">
         {filteredAndSortedArticles?.length > 0 ? (
           filteredAndSortedArticles.map((article) => (
             <div
               key={article.id}
-              className={`p-2  bg-white shadow-lg rounded-xl relative w-full${
+              onClick={() => navigate(`/articles/${article.id}`)}
+              className={`p-2 border-2 border-gray-950 bg-amber-50 shadow-lg rounded-xl relative sm:w-full w-[49%] cursor-pointer ${
                 editArticleId === article.id ? "bg-gray-100" : ""
               }`}
             >
-              <h3 className="text-lg sm:mr-5 lg:mr-0 font-semibold cursor-pointer hover:text-blue-500">
-                <NavLink to={`/articles/${article.id}`}>
-                  {article.title}
-                </NavLink>
+              <h3 className="text-lg sm:mr-5 lg:mr-0 font-semibold text-black">
+                {article.title}
               </h3>
               <span className="text-sm text-blue-900">
                 Kateqoriya: {article.category}
@@ -289,23 +269,11 @@ export const Articles = () => {
                   "dd/MM/yyyy HH:mm"
                 )}
               </p>
+              <p className="text-sm text-gray-400 mb-2">
+                {getPreview(article.content)}
+              </p>
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleLike(article.id);
-                }}
-                className="absolute top-2 right-2"
-              >
-                {article.likes.includes(user.uid) ? (
-                  <BiSolidLike className="text-blue-500 h-6 w-6" />
-                ) : (
-                  <BiLike className="text-gray-400 h-6 w-6" />
-                )}
-                <span className="ml-1">{article.likes.length}</span>
-              </button>
-
-              {(article.userId === user.uid || isAdmin) && (
+              {user && (article.userId === user.uid || isAdmin) && (
                 <div className="w-full flex justify-end gap-2">
                   {editArticleId !== article.id && (
                     <>
@@ -316,7 +284,7 @@ export const Articles = () => {
                           setEditTitle(article.title);
                           setEditContent(article.content);
                         }}
-                        className=" px-3 py-1 bg-blue-500 text-white text-sm rounded"
+                        className="px-3 py-1 bg-blue-500 text-white text-sm rounded"
                       >
                         Redaktə et
                       </button>
@@ -325,7 +293,7 @@ export const Articles = () => {
                           e.stopPropagation();
                           deleteArticle(article.id);
                         }}
-                        className=" px-3 py-1 bg-red-500 text-white text-sm rounded"
+                        className="px-3 py-1 bg-red-500 text-white text-sm rounded"
                       >
                         Sil
                       </button>
@@ -338,7 +306,7 @@ export const Articles = () => {
                         type="text"
                         value={editTitle}
                         onChange={(e) => handleEditChange(e, "title")}
-                        className="block w-full mt-2 p-2 border border-gray-300 rounded"
+                        className="block w-full my-2 p-2 border border-gray-300 rounded"
                       />
                       <JoditEditor
                         ref={editorRef}
@@ -362,7 +330,7 @@ export const Articles = () => {
                           e.stopPropagation();
                           setEditArticleId(null);
                         }}
-                        className=" mx-3 px-3 py-1 bg-gray-500 text-white text-sm rounded"
+                        className="mx-3 px-3 py-1 bg-gray-500 text-white text-sm rounded"
                       >
                         Ləğv et
                       </button>
@@ -375,11 +343,17 @@ export const Articles = () => {
         ) : user ? (
           <p>Məqalə yoxdur.</p>
         ) : (
-          <div className="h-[85vh] flex items-center justify-center">
-            <div className="bg-white p-8 rounded-lg shadow-xl text-center max-w-lg">
-              <p className="text-xl font-semibold text-black mb-4">
-                Məqalələri oxumaq üçün daxil olun
+          <div className="p-4 flex justify-center items-center h-[85vh] w-full">
+            <div className="bg-zinc-100 p-9 rounded-lg shadow-lg flex items-center flex-col gap-2">
+              <p className="text-lg text-center">
+                Məqalələri oxumaq üçün zəhmət olmasa giriş edin.
               </p>
+              <NavLink
+                to="/auth/login"
+                className="bg-black text-white py-2 px-4 rounded-lg"
+              >
+                Daxil ol
+              </NavLink>
             </div>
           </div>
         )}
