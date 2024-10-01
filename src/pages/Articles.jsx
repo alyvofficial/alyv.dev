@@ -16,7 +16,7 @@ import "jodit";
 import JoditEditor from "jodit-react";
 import { useQuery, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
 
 export const Articles = () => {
   const queryClient = useQueryClient();
@@ -29,6 +29,11 @@ export const Articles = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 4; // Number of articles per page
+  
   const config = useMemo(
     () => ({
       readonly: false,
@@ -128,35 +133,51 @@ export const Articles = () => {
     }
   }, [articles]);
 
-  // Makaleleri filtreleme ve sıralama
-  const filteredAndSortedArticles = useMemo(() => {
-    return articles
-      ?.filter((article) => {
-        const matchesSearch = article.title
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-        const matchesCategory =
-          selectedCategory === "all" || article.category === selectedCategory;
-        return matchesSearch && matchesCategory;
-      })
-      .sort((a, b) => {
-        if (sortOrder === "newest") {
-          return b.createdAt.seconds - a.createdAt.seconds;
-        } else if (sortOrder === "oldest") {
-          return a.createdAt.seconds - b.createdAt.seconds;
-        } else if (sortOrder === "A-Z") {
-          return a.title.localeCompare(b.title);
-        } else {
-          return b.title.localeCompare(a.title);
-        }
-      });
-  }, [articles, searchQuery, selectedCategory, sortOrder]);
+ // Makaleleri filtreleme ve sıralama
+const filteredAndSortedArticles = useMemo(() => {
+  if (!articles) return { currentArticles: [], totalPages: 0 }; // Fallback if articles are undefined
+
+  const filteredArticles = articles
+    ?.filter((article) => {
+      const matchesSearch = article.title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "all" || article.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      if (sortOrder === "newest") {
+        return b.createdAt.seconds - a.createdAt.seconds;
+      } else if (sortOrder === "oldest") {
+        return a.createdAt.seconds - b.createdAt.seconds;
+      } else if (sortOrder === "A-Z") {
+        return a.title.localeCompare(b.title);
+      } else {
+        return b.title.localeCompare(a.title);
+      }
+    });
+
+  // Calculate the total number of pages
+  const totalArticles = filteredArticles.length;
+  const totalPages = Math.ceil(totalArticles / articlesPerPage);
+
+  // Slice the articles for the current page
+  const currentArticles = filteredArticles.slice(
+    (currentPage - 1) * articlesPerPage,
+    currentPage * articlesPerPage
+  );
+
+  return { currentArticles, totalPages };
+}, [articles, searchQuery, selectedCategory, sortOrder, currentPage]);
+
+  
 
   return (
     <section className="p-5 flex flex-col overflow-y-auto w-full">
       <ToastContainer position="top-center" autoClose={2000} />
 
-      {isLoading && user && (
+      {isLoading && (
         <div className="w-full h-screen flex items-center justify-center">
           <div className="text-center">
             <svg
@@ -184,71 +205,69 @@ export const Articles = () => {
         </div>
       )}
 
-      {user && (
-        <div className="flex sm:flex-col lg:flex-row-reverse sm:items-start lg:items-center lg:justify-between gap-3 mb-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <svg
-                className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                />
-              </svg>
-            </div>
-            <input
-              type="search"
-              id="default-search"
-              className="block w-full p-1 ps-10 text-sm focus:outline-none border border-gray-500 rounded-lg"
-              placeholder="Axtarışa başlayın..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="w-auto flex">
-            <label htmlFor="sortOrder" className=""></label>
-            <select
-              id="sortOrder"
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="p-1 mr-2 border border-gray-300 rounded-lg focus:outline-none"
+      <div className="flex sm:flex-col lg:flex-row-reverse sm:items-start lg:items-center lg:justify-between gap-3 mb-4">
+        <div className="relative">
+          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <svg
+              className="w-4 h-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
             >
-              <option value="newest">Yenilər</option>
-              <option value="oldest">Köhnələr</option>
-              <option value="A-Z">A-Z</option>
-              <option value="Z-A">Z-A</option>
-            </select>
-
-            <label htmlFor="category" className=""></label>
-            <select
-              id="category"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="p-1 border border-gray-300 rounded-lg focus:outline-none"
-            >
-              <option value="all">Hamısı</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+              />
+            </svg>
           </div>
+          <input
+            type="search"
+            id="default-search"
+            className="block w-full p-1 ps-10 text-sm focus:outline-none border border-gray-500 rounded-lg"
+            placeholder="Axtarışa başlayın..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-      )}
+
+        <div className="w-auto flex">
+          <label htmlFor="sortOrder" className=""></label>
+          <select
+            id="sortOrder"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="p-1 mr-2 border border-gray-300 rounded-lg focus:outline-none"
+          >
+            <option value="newest">Yenilər</option>
+            <option value="oldest">Köhnələr</option>
+            <option value="A-Z">A-Z</option>
+            <option value="Z-A">Z-A</option>
+          </select>
+
+          <label htmlFor="category" className=""></label>
+          <select
+            id="category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="p-1 border border-gray-300 rounded-lg focus:outline-none"
+          >
+            <option value="all">Hamısı</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       <div className="flex flex-wrap gap-4">
-        {filteredAndSortedArticles?.length > 0 ? (
-          filteredAndSortedArticles.map((article) => (
+      {filteredAndSortedArticles.currentArticles.length > 0 ? (
+        filteredAndSortedArticles.currentArticles.map((article) => (
             <div
               key={article.id}
               onClick={() => navigate(`/articles/${article.id}`)}
@@ -340,24 +359,22 @@ export const Articles = () => {
               )}
             </div>
           ))
-        ) : user ? (
-          <p>Məqalə yoxdur.</p>
         ) : (
-          <div className="p-4 flex justify-center items-center h-[85vh] w-full">
-            <div className="bg-zinc-100 p-9 rounded-lg shadow-lg flex items-center flex-col gap-2">
-              <p className="text-lg text-center">
-                Məqalələri oxumaq üçün zəhmət olmasa giriş edin.
-              </p>
-              <NavLink
-                to="/auth/login"
-                className="bg-black text-white py-2 px-4 rounded-lg"
-              >
-                Daxil ol
-              </NavLink>
-            </div>
-          </div>
+          <p>Məqalə yoxdur.</p>
         )}
       </div>
+      {/* Pagination Controls */}
+    <div className="flex justify-center my-4">
+      {Array.from({ length: filteredAndSortedArticles.totalPages }, (_, index) => (
+        <button
+          key={index}
+          onClick={() => setCurrentPage(index + 1)}
+          className={`mx-2 px-4 py-2 rounded ${currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        >
+          {index + 1}
+        </button>
+      ))}
+    </div>
     </section>
   );
 };

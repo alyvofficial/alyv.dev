@@ -11,6 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import PropTypes from "prop-types";
+import { NavLink } from "react-router-dom";
 
 // Fetch comments from Firestore
 const fetchComments = async (firestore, articleId) => {
@@ -74,7 +75,7 @@ export const Comments = ({ articleId }) => {
   const queryClient = useQueryClient();
 
   // Fetch comments from Firestore
-  const { data: comments } = useQuery(
+  const { data: comments = [] } = useQuery(
     ["comments", articleId],
     async () => {
       const fetchedComments = await fetchComments(firestore, articleId);
@@ -200,23 +201,26 @@ export const Comments = ({ articleId }) => {
             {comment.content}
             <div className="flex gap-1">
               {/* Reply button */}
-              <button
-                onClick={() => handleReplyClick(comment.id)}
-                className="mr-2 text-blue-600 hover:underline focus:outline-none focus:ring focus:ring-blue-300 transition text-sm"
-              >
-                Cavabla
-              </button>
-
-              {/* Delete button for admin/comment author */}
-              {(user.email === "alyvdev@gmail.com" ||
-                user.uid === comment.userId) && (
+              {user && (
                 <button
-                  onClick={() => handleDeleteComment(comment)}
-                  className="text-red-500 hover:underline transition duration-200 text-sm"
+                  onClick={() => handleReplyClick(comment.id)}
+                  className="mr-2 text-blue-600 hover:underline focus:outline-none focus:ring focus:ring-blue-300 transition text-sm"
                 >
-                  Sil
+                  Cavabla
                 </button>
               )}
+
+              {/* Delete button for admin/comment author */}
+              {user &&
+                (user.email === "alyvdev@gmail.com" ||
+                  user.uid === comment.userId) && (
+                  <button
+                    onClick={() => handleDeleteComment(comment)}
+                    className="text-red-500 hover:underline transition duration-200 text-sm"
+                  >
+                    Sil
+                  </button>
+                )}
             </div>
           </p>
 
@@ -269,31 +273,38 @@ export const Comments = ({ articleId }) => {
     <div>
       <ToastContainer position="top-center" autoClose={2000} />
       <div className="p-4" id="comments">
-        <form onSubmit={handleCommentSubmit} className="mt-4">
-          <textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Rəyiniz..."
-            className="w-full p-2 border border-gray-300 rounded"
-            rows="4"
-            required
-            maxLength="500"
-          />
-          <button
-            type="submit"
-            className="mt-2 bg-blue-500 text-white py-2 px-4 rounded"
-          >
-            Rəy bildir
-          </button>
-        </form>
+        {user ? (
+          <form onSubmit={handleCommentSubmit} className="mt-4">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Rəyiniz..."
+              className="w-full p-2 border border-gray-300 rounded"
+              rows="4"
+              required
+              maxLength="500"
+            />
+            <button
+              type="submit"
+              className="mt-2 bg-blue-500 text-white py-2 px-4 rounded"
+            >
+              Rəy bildir
+            </button>
+          </form>
+        ) : (
+          <p className="mt-4">
+            Rəy bildirmək üçün{" "}
+            <NavLink to="/auth/login" className="text-blue-500 hover:underline">
+              giriş edin
+            </NavLink>
+            .
+          </p>
+        )}
 
         {/* List comments and replies */}
         <div className="mt-2 max-h-64 overflow-y-auto">
-          {comments && comments.length > 0 ? (
-            renderComments(comments)
-          ) : (
-            <p>Rəy yoxdur.</p>
-          )}
+          {comments.length > 0 ? renderComments(comments) : <>
+          </>}
         </div>
       </div>
     </div>

@@ -41,7 +41,6 @@ const toggleLike = async ({ firestore, articleId, user, likes }) => {
   }
 };
 
-
 export const ArticlesDetails = () => {
   const { id } = useParams();
   const { user, firestore } = useAuthContext();
@@ -92,7 +91,6 @@ export const ArticlesDetails = () => {
       navigator
         .share(shareData)
         .then(() => {
-          toast.success("Məqalə paylaşıldı!");
         })
         .catch((error) => {
           toast.error("Paylaşım uğursuz oldu!");
@@ -100,7 +98,6 @@ export const ArticlesDetails = () => {
         });
     } else {
       navigator.clipboard.writeText(shareData.url);
-      toast.success("Məqalə linki kopyalandı!");
     }
   };
 
@@ -136,21 +133,7 @@ export const ArticlesDetails = () => {
   return (
     <section className="">
       <ToastContainer position="top-center" autoClose={2000} />
-      {!user ? (
-        <div className="p-4 flex justify-center items-center h-[85vh] w-full">
-          <div className="bg-zinc-100 p-9 rounded-lg shadow-lg flex items-center flex-col gap-2">
-            <p className="text-lg text-center">
-              Məqalələri oxumaq üçün zəhmət olmasa giriş edin.
-            </p>
-            <NavLink
-              to="/auth/login"
-              className="bg-black text-white py-2 px-4 rounded-lg"
-            >
-              Daxil ol
-            </NavLink>
-          </div>
-        </div>
-      ) : article ? (
+      {article ? (
         <div className="p-4">
           <div className="w-full py-4 flex items-center justify-between text-gray-500">
             <div className="flex items-center">
@@ -170,20 +153,23 @@ export const ArticlesDetails = () => {
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-2xl font-semibold">{article.title}</h2>
               <div className="flex gap-2 text-blue-500">
-                {/* Beğen butonu */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleLike();
-                  }}
-                >
-                  {article.likes.includes(user.uid) ? (
-                    <BiSolidLike className="text-blue-500 h-6 w-6" />
-                  ) : (
-                    <BiLike className="text-gray-400 h-6 w-6" />
-                  )}
-                  <span className="ml-1">{article.likes.length}</span>
-                </button>
+                {user ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLike();
+                    }}
+                  >
+                    {article.likes.includes(user.uid) ? (
+                      <BiSolidLike className="text-blue-500 h-6 w-6" />
+                    ) : (
+                      <BiLike className="text-gray-400 h-6 w-6" />
+                    )}
+                    <span className="ml-1">{article.likes.length}</span>
+                  </button>
+                ) : (
+                  <BiLike className="text-gray-400 h-6 w-6 cursor-not-allowed" />
+                )}
                 <a href="#comments">
                   <FaComments className="h-6 w-6" />
                 </a>
@@ -200,21 +186,10 @@ export const ArticlesDetails = () => {
           </div>
           <hr />
           <Comments articleId={article.id} />
-
         </div>
       ) : (
-        <div className="p-4 flex justify-center items-center h-[85vh] w-full">
-          <div className="bg-zinc-100 p-9 rounded-lg shadow-lg flex items-center flex-col gap-2">
-            <p className="text-lg text-center">
-              Məqalələri oxumaq üçün zəhmət olmasa giriş edin.
-            </p>
-            <NavLink
-              to="/auth/login"
-              className="bg-black text-white py-2 px-4 rounded-lg"
-            >
-              Daxil ol
-            </NavLink>
-          </div>
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold">Məqalə tapılmadı!</h2>
         </div>
       )}
     </section>
