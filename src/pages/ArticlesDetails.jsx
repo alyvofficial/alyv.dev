@@ -176,7 +176,7 @@ export const ArticlesDetails = () => {
               </div>
             </div>
             <p className="text-sm text-gray-500">
-              Kateqoriya: {article.category}
+              {article.category}
             </p>
             <div
               className="mt-2"

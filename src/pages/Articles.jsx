@@ -16,7 +16,8 @@ import "jodit";
 import JoditEditor from "jodit-react";
 import { useQuery, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
-// import { NavLink } from "react-router-dom";
+import { MdDelete, MdEdit, MdCancel } from "react-icons/md";
+import { RxUpdate } from "react-icons/rx";
 
 export const Articles = () => {
   const queryClient = useQueryClient();
@@ -29,11 +30,9 @@ export const Articles = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
   const [selectedCategory, setSelectedCategory] = useState("all");
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const articlesPerPage = 4; // Number of articles per page
-  
+  const articlesPerPage = 6;
+
   const config = useMemo(
     () => ({
       readonly: false,
@@ -49,11 +48,9 @@ export const Articles = () => {
     "Təhsil",
     "Digər",
   ]);
-
   const isAdmin = user && user.email === "alyvdev@gmail.com";
   const articleContentRef = useRef(null);
 
-  // React Query ile veri çekme ve önbelleğe alma
   const { data: articles, isLoading } = useQuery(["articles"], async () => {
     const querySnapshot = await getDocs(collection(firestore, "articles"));
     return querySnapshot.docs.map((doc) => ({
@@ -62,9 +59,8 @@ export const Articles = () => {
     }));
   });
 
-  // Makale silme
   const deleteArticle = async (id) => {
-    if (!articles) return; // Ensure articles is defined
+    if (!articles) return;
     const articleToDelete = articles.find((article) => article.id === id);
     if (articleToDelete && (articleToDelete.userId === user.uid || isAdmin)) {
       try {
@@ -80,7 +76,6 @@ export const Articles = () => {
     }
   };
 
-  // Düzenleme durumunu yönetme
   const handleEditChange = (e, field) => {
     if (field === "title") {
       setEditTitle(e.target.value);
@@ -89,20 +84,15 @@ export const Articles = () => {
     }
   };
 
-  // Makale güncelleme
   const updateArticle = async (id) => {
     try {
       const articleRef = doc(firestore, "articles", id);
       const updatedContent = editorRef.current.value;
-
-      // Update Firestore
       await updateDoc(articleRef, {
         title: editTitle,
         content: updatedContent,
         updatedAt: new Date(),
       });
-
-      // Update local cache
       queryClient.setQueryData(["articles"], (oldArticles) =>
         oldArticles.map((article) =>
           article.id === id
@@ -110,7 +100,6 @@ export const Articles = () => {
             : article
         )
       );
-
       toast.success("Məqalə güncəlləndi!");
       setEditArticleId(null);
     } catch (error) {
@@ -119,59 +108,42 @@ export const Articles = () => {
     }
   };
 
-  const getPreview = (content) => {
-    const textContent = content.replace(/<[^>]*>/g, "");
-    return textContent.length > 150
-      ? `${textContent.substring(0, 100)}...`
-      : textContent;
-  };
-
-  // Kod vurgulama
   useEffect(() => {
     if (articleContentRef.current) {
       hljs.highlightAll();
     }
   }, [articles]);
 
- // Makaleleri filtreleme ve sıralama
-const filteredAndSortedArticles = useMemo(() => {
-  if (!articles) return { currentArticles: [], totalPages: 0 }; // Fallback if articles are undefined
-
-  const filteredArticles = articles
-    ?.filter((article) => {
-      const matchesSearch = article.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "all" || article.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => {
-      if (sortOrder === "newest") {
-        return b.createdAt.seconds - a.createdAt.seconds;
-      } else if (sortOrder === "oldest") {
-        return a.createdAt.seconds - b.createdAt.seconds;
-      } else if (sortOrder === "A-Z") {
-        return a.title.localeCompare(b.title);
-      } else {
-        return b.title.localeCompare(a.title);
-      }
-    });
-
-  // Calculate the total number of pages
-  const totalArticles = filteredArticles.length;
-  const totalPages = Math.ceil(totalArticles / articlesPerPage);
-
-  // Slice the articles for the current page
-  const currentArticles = filteredArticles.slice(
-    (currentPage - 1) * articlesPerPage,
-    currentPage * articlesPerPage
-  );
-
-  return { currentArticles, totalPages };
-}, [articles, searchQuery, selectedCategory, sortOrder, currentPage]);
-
-  
+  const filteredAndSortedArticles = useMemo(() => {
+    if (!articles) return { currentArticles: [], totalPages: 0 };
+    const filteredArticles = articles
+      ?.filter((article) => {
+        const matchesSearch = article.title
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        const matchesCategory =
+          selectedCategory === "all" || article.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      })
+      .sort((a, b) => {
+        if (sortOrder === "newest") {
+          return b.createdAt.seconds - a.createdAt.seconds;
+        } else if (sortOrder === "oldest") {
+          return a.createdAt.seconds - b.createdAt.seconds;
+        } else if (sortOrder === "A-Z") {
+          return a.title.localeCompare(b.title);
+        } else {
+          return b.title.localeCompare(a.title);
+        }
+      });
+    const totalArticles = filteredArticles.length;
+    const totalPages = Math.ceil(totalArticles / articlesPerPage);
+    const currentArticles = filteredArticles.slice(
+      (currentPage - 1) * articlesPerPage,
+      currentPage * articlesPerPage
+    );
+    return { currentArticles, totalPages };
+  }, [articles, searchQuery, selectedCategory, sortOrder, currentPage]);
 
   return (
     <section className="p-5 flex flex-col overflow-y-auto w-full">
@@ -266,30 +238,24 @@ const filteredAndSortedArticles = useMemo(() => {
       </div>
 
       <div className="flex flex-wrap gap-4">
-      {filteredAndSortedArticles.currentArticles.length > 0 ? (
-        filteredAndSortedArticles.currentArticles.map((article) => (
+        {filteredAndSortedArticles.currentArticles.length > 0 ? (
+          filteredAndSortedArticles.currentArticles.map((article) => (
             <div
               key={article.id}
               onClick={() => navigate(`/articles/${article.id}`)}
-              className={`p-2 border-2 border-gray-950 bg-amber-50 shadow-lg rounded-xl relative sm:w-full w-[49%] cursor-pointer ${
+              className={`p-2 border-2 border-gray-950 bg-amber-50 shadow-lg rounded-xl relative sm:w-full lg:w-[49%] cursor-pointer ${
                 editArticleId === article.id ? "bg-gray-100" : ""
               }`}
             >
               <h3 className="text-lg sm:mr-5 lg:mr-0 font-semibold text-black">
                 {article.title}
               </h3>
-              <span className="text-sm text-blue-900">
-                Kateqoriya: {article.category}
-              </span>
+              <span className="text-sm text-blue-900">{article.category}</span>
               <p className="text-xs text-gray-500 mb-1">
-                Yazıldığı tarix:{" "}
                 {format(
                   new Date(article.createdAt.seconds * 1000),
                   "dd/MM/yyyy HH:mm"
                 )}
-              </p>
-              <p className="text-sm text-gray-400 mb-2">
-                {getPreview(article.content)}
               </p>
 
               {user && (article.userId === user.uid || isAdmin) && (
@@ -305,7 +271,7 @@ const filteredAndSortedArticles = useMemo(() => {
                         }}
                         className="px-3 py-1 bg-blue-500 text-white text-sm rounded"
                       >
-                        Redaktə et
+                        <MdEdit />
                       </button>
                       <button
                         onClick={(e) => {
@@ -314,7 +280,7 @@ const filteredAndSortedArticles = useMemo(() => {
                         }}
                         className="px-3 py-1 bg-red-500 text-white text-sm rounded"
                       >
-                        Sil
+                        <MdDelete />
                       </button>
                     </>
                   )}
@@ -340,18 +306,18 @@ const filteredAndSortedArticles = useMemo(() => {
                           e.stopPropagation();
                           updateArticle(article.id);
                         }}
-                        className="px-3 py-1 mt-2 bg-green-500 text-white text-sm rounded"
+                        className="px-3 py-1 mt-2 bg-blue-500 text-white text-sm rounded"
                       >
-                        Güncəllə
+                        <RxUpdate />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setEditArticleId(null);
                         }}
-                        className="mx-3 px-3 py-1 bg-gray-500 text-white text-sm rounded"
+                        className="mx-3 px-3 py-1 bg-red-500 text-white text-sm rounded"
                       >
-                        Ləğv et
+                        <MdCancel />
                       </button>
                     </div>
                   )}
@@ -364,17 +330,24 @@ const filteredAndSortedArticles = useMemo(() => {
         )}
       </div>
       {/* Pagination Controls */}
-    <div className="flex justify-center my-4">
-      {Array.from({ length: filteredAndSortedArticles.totalPages }, (_, index) => (
-        <button
-          key={index}
-          onClick={() => setCurrentPage(index + 1)}
-          className={`mx-2 px-4 py-2 rounded ${currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          {index + 1}
-        </button>
-      ))}
-    </div>
+      <div className="flex my-4">
+        {Array.from(
+          { length: filteredAndSortedArticles.totalPages },
+          (_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`mr-2 px-3 py-2 border-2 border-gray-950 rounded-xl ${
+                currentPage === index + 1
+                  ? "bg-amber-50 text-black"
+                  : "bg-gray-200"
+              }`}
+            >
+              {index + 1}
+            </button>
+          )
+        )}
+      </div>
     </section>
   );
 };

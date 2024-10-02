@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
+import { FaComment } from "react-icons/fa";
 
 // Fetch comments from Firestore
 const fetchComments = async (firestore, articleId) => {
@@ -235,9 +236,9 @@ export const Comments = ({ articleId }) => {
                 onChange={(e) => handleReplyContentChange(e, comment.id)}
                 placeholder="Rəyiniz..."
                 className="w-full p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring focus:ring-blue-300"
-                rows="2"
+                rows="1"
                 required
-                maxLength="300"
+                maxLength="200"
               />
               <div className="flex justify-between mt-2">
                 <button
@@ -288,7 +289,7 @@ export const Comments = ({ articleId }) => {
               type="submit"
               className="mt-2 bg-blue-500 text-white py-2 px-4 rounded"
             >
-              Rəy bildir
+              <FaComment />
             </button>
           </form>
         ) : (
