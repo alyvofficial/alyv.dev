@@ -13,14 +13,15 @@ import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 export const FirebaseContext = createContext({});
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCSkUnJx-PJmU2eurxql1lAB9bLamneNJI",
-  authDomain: "alyv-devv.firebaseapp.com",
-  projectId: "alyv-devv",
-  storageBucket: "alyv-devv.appspot.com",
-  messagingSenderId: "324116736339",
-  appId: "1:324116736339:web:7e3642f6e49c9f797919a6",
-  measurementId: "G-GX74TFM5V0",
+  apiKey: import.meta.env.VITE_REACT_APP_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_REACT_APP_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
+
 
 const FirebaseProvider = (props) => {
   // eslint-disable-next-line react/prop-types
