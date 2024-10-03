@@ -6,6 +6,12 @@ import {
   doc,
   updateDoc,
   getDocs,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  endBefore,
+  getCountFromServer,
 } from "firebase/firestore";
 import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
@@ -31,7 +37,10 @@ export const Articles = () => {
   const [sortOrder, setSortOrder] = useState("newest");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const articlesPerPage = 6;
+  const articlesPerPage = 4;
+  const [lastVisible, setLastVisible] = useState(null);
+  const [firstVisible, setFirstVisible] = useState(null);
+  const [totalPages, setTotalPages] = useState(0);
 
   const config = useMemo(
     () => ({
@@ -41,6 +50,82 @@ export const Articles = () => {
     }),
     []
   );
+  
+  const fetchArticles = async () => {
+    const articlesCollection = collection(firestore, "articles");
+    const articlesQuery = query(
+      articlesCollection,
+      orderBy("createdAt", "desc"),
+      limit(articlesPerPage)
+    );
+
+    const querySnapshot = await getDocs(articlesQuery);
+    const articlesData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+    setFirstVisible(querySnapshot.docs[0]);
+    return articlesData;
+  };
+
+  const fetchTotalPages = async () => {
+    const articlesCollection = collection(firestore, "articles");
+    const count = await getCountFromServer(articlesCollection);
+    const totalArticles = count.data().count;
+    const totalPages = Math.ceil(totalArticles / articlesPerPage);
+    setTotalPages(totalPages);
+  };
+
+  useEffect(() => {
+    fetchArticles();
+    fetchTotalPages();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadMoreArticles = async (direction) => {
+    const articlesCollection = collection(firestore, "articles");
+    let articlesQuery;
+
+    if (direction === "next" && lastVisible) {
+      articlesQuery = query(
+        articlesCollection,
+        orderBy("createdAt", "desc"),
+        startAfter(lastVisible),
+        limit(articlesPerPage)
+      );
+    } else if (direction === "prev" && firstVisible) {
+      articlesQuery = query(
+        articlesCollection,
+        orderBy("createdAt", "desc"),
+        endBefore(firstVisible),
+        limit(articlesPerPage)
+      );
+    } else {
+      return;
+    }
+
+    const querySnapshot = await getDocs(articlesQuery);
+    const articlesData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+    setFirstVisible(querySnapshot.docs[0]);
+    return articlesData;
+  };
+
+  const handlePagination = async (direction) => {
+    await loadMoreArticles(direction);
+    if (direction === "next") {
+      setCurrentPage((prev) => prev + 1);
+    } else {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   const [categories] = useState([
     "Proqramlaşdırma",
     "Qrafik dizayn",
@@ -57,6 +142,11 @@ export const Articles = () => {
       id: doc.id,
       ...doc.data(),
     }));
+  }, {
+    staleTime: Infinity, // Verileri süresiz olarak önbellekte tut
+    refetchOnMount: false,      // Bileşen mount edildiğinde yeniden getirme
+    refetchOnWindowFocus: false, // Pencere odağa geldiğinde yeniden getirme
+    refetchOnReconnect: false,   // Bağlantı yeniden kurulduğunda yeniden getirme
   });
 
   const deleteArticle = async (id) => {
@@ -65,7 +155,7 @@ export const Articles = () => {
     if (articleToDelete && (articleToDelete.userId === user.uid || isAdmin)) {
       try {
         await deleteDoc(doc(firestore, "articles", id));
-        localStorage.removeItem(`article_${id}`);
+        queryClient.invalidateQueries("articles");
         toast.success("Məqalə silindi!");
       } catch (error) {
         toast.error("Məqalə silinə bilmədi!");
@@ -87,6 +177,7 @@ export const Articles = () => {
   const updateArticle = async (id) => {
     try {
       const articleRef = doc(firestore, "articles", id);
+      queryClient.invalidateQueries("articles");
       const updatedContent = editorRef.current.value;
       await updateDoc(articleRef, {
         title: editTitle,
@@ -330,24 +421,23 @@ export const Articles = () => {
         )}
       </div>
       {/* Pagination Controls */}
-      <div className="flex my-4">
-        {Array.from(
-          { length: filteredAndSortedArticles.totalPages },
-          (_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(index + 1)}
-              className={`mr-2 px-3 py-2 border-2 border-gray-950 rounded-xl ${
-                currentPage === index + 1
-                  ? "bg-amber-50 text-black"
-                  : "bg-gray-200"
-              }`}
-            >
-              {index + 1}
-            </button>
-          )
-        )}
-      </div>
+      <div className="flex items-center my-4 space-x-4">
+  <button
+    onClick={() => handlePagination("prev")}
+    disabled={currentPage === 1}
+    className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+  >
+    Əvvəl
+  </button>
+  <span className="font-medium">{currentPage} / {totalPages}</span>
+  <button
+    onClick={() => handlePagination("next")}
+    disabled={currentPage === totalPages}
+    className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+  >
+    Sonra
+  </button>
+</div>
     </section>
   );
 };

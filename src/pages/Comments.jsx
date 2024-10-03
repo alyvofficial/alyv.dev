@@ -172,6 +172,7 @@ export const Comments = ({ articleId }) => {
   };
 
   // Recursive function to render comments and replies
+  // Recursive function to render comments and replies
   const renderComments = (comments, parentId = null) => {
     if (!comments || comments.length === 0) return null;
 
@@ -180,9 +181,9 @@ export const Comments = ({ articleId }) => {
       .map((comment) => (
         <div
           key={comment.id}
-          className={`mb-4 p-2 border rounded-lg shadow-sm transition duration-200 ${
-            parentId ? "ml-1 bg-gray-50" : "bg-white"
-          } hover:shadow-md`}
+          className={`mb-4 p-2 border rounded-lg shadow transition duration-200 ${
+            parentId ? "bg-gray-50" : "bg-white"
+          } hover:shadow-lg`}
         >
           {/* Comment UI */}
           <div className="flex items-center mb-3">
@@ -198,14 +199,23 @@ export const Comments = ({ articleId }) => {
               </p>
             </div>
           </div>
-          <p className="bg-gray-100 p-2 rounded-md mb-3 text-gray-800 shadow-inner flex flex-col items-start gap-2 text-wrap">
+          <div className="bg-gray-100 p-2 rounded-md mb-3 text-gray-800 shadow-inner flex flex-col items-start gap-2">
             {comment.content}
-            <div className="flex gap-1">
+            {parentId && ( // Show reply context only if it's a reply
+              <span className="text-xs font-bold text-gray-500 mt-2">
+                {/* Add the replying user's name here */}
+                @{
+                  comments.find((c) => c.id === comment.parentCommentId)
+                    ?.userName
+                }
+              </span>
+            )}
+            <div className="flex gap-2">
               {/* Reply button */}
               {user && (
                 <button
                   onClick={() => handleReplyClick(comment.id)}
-                  className="mr-2 text-blue-600 hover:underline focus:outline-none focus:ring focus:ring-blue-300 transition text-sm"
+                  className="text-blue-600 hover:underline focus:outline-none focus:ring focus:ring-blue-300 transition text-sm"
                 >
                   Cavabla
                 </button>
@@ -223,13 +233,13 @@ export const Comments = ({ articleId }) => {
                   </button>
                 )}
             </div>
-          </p>
+          </div>
 
           {/* Reply textarea */}
           {replyToCommentId === comment.id && (
             <form
               onSubmit={(e) => handleReplySubmit(e, comment.id)}
-              className="mt-3 bg-gray-200 p-3 rounded-md"
+              className="mt-3 bg-gray-200 p-2 rounded-md"
             >
               <textarea
                 value={replyContent[comment.id] || ""}
@@ -273,29 +283,29 @@ export const Comments = ({ articleId }) => {
   return (
     <div>
       <ToastContainer position="top-center" autoClose={2000} />
-      <div className="p-4" id="comments">
+      <div className="p-2 bg-gray-50 rounded-lg shadow-md" id="comments">
         {user ? (
           <form onSubmit={handleCommentSubmit} className="mt-4">
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Rəyiniz..."
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
               rows="4"
               required
               maxLength="500"
             />
             <button
               type="submit"
-              className="mt-2 bg-blue-500 text-white py-2 px-4 rounded"
+              className="my-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
             >
               <FaComment />
             </button>
           </form>
         ) : (
-          <p className="mt-4">
+          <p className="mt-4 text-gray-700">
             Rəy bildirmək üçün{" "}
-            <NavLink to="/auth/login" className="text-blue-500 hover:underline">
+            <NavLink to="/auth/login" className="text-blue-600 hover:underline">
               giriş edin
             </NavLink>
             .
@@ -303,9 +313,12 @@ export const Comments = ({ articleId }) => {
         )}
 
         {/* List comments and replies */}
-        <div className="mt-2 max-h-64 overflow-y-auto">
-          {comments.length > 0 ? renderComments(comments) : <>
-          </>}
+        <div className="">
+          {comments.length > 0 ? (
+            renderComments(comments)
+          ) : (
+            <p className="text-gray-500">Heç bir rəy yoxdur.</p>
+          )}
         </div>
       </div>
     </div>

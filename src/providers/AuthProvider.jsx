@@ -14,8 +14,9 @@ import {
   signInWithPopup,
   GithubAuthProvider,
 } from "firebase/auth";
-import { doc, getDoc, setDoc, getFirestore } from "firebase/firestore";
+import { doc, getDoc, setDoc, getFirestore, updateDoc } from "firebase/firestore";
 import { useFirebaseContext } from "./FirebaseProvider";
+import { useQuery, useQueryClient } from "react-query";
 
 export const AuthContext = createContext({});
 
@@ -24,11 +25,35 @@ const PROFILE_COLLECTION = "users";
 const AuthProvider = (props) => {
   const { myAuth, myFS } = useFirebaseContext();
   const firestore = getFirestore();
-
+  const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authErrorMessages, setAuthErrorMessages] = useState();
   const { children } = props;
+
+
+  const fetchUserData = async (userId) => {
+    const userDocRef = doc(myFS, PROFILE_COLLECTION, userId);
+    const docSnap = await getDoc(userDocRef);
+    return docSnap.data();
+  };
+
+  const { data: userData, isLoading: userLoading, error: userError } = useQuery(
+    ["user", user?.uid],
+    () => fetchUserData(user?.uid),
+    {
+      enabled: !!user,
+      staleTime: Infinity,
+      cacheTime: Infinity,
+      // onSuccess: (data) => {
+      //   if (data) {
+      //     const updatedUserData = { ...data, lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }) };
+      //     queryClient.setQueryData(["user", user?.uid], updatedUserData);
+      //     // updateDoc(doc(myFS, PROFILE_COLLECTION, user.uid), { lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }) });
+      //   }
+      // }
+    }
+  );
 
   const logoutFunction = useCallback(async () => {
     try {
@@ -47,63 +72,42 @@ const AuthProvider = (props) => {
 
   useEffect(() => {
     if (myAuth) {
-      let unsubscribe = onAuthStateChanged(myAuth, async (user) => {
+      const unsubscribe = onAuthStateChanged(myAuth, (user) => {
         if (!user) {
-          document.title = "ALYV Dev";
-          setUser(null);
-          setAuthLoading(false);
+          // ... (user yoksa işlemler)
           return;
         }
 
         setUser(user);
         document.title = `${user.email} - ALYV Dev`;
 
-        const userDocRef = doc(myFS, PROFILE_COLLECTION, user.uid);
-
-        try {
-          const docSnap = await getDoc(userDocRef);
-
-          if (!docSnap.exists()) {
-            const displayName = user.displayName || "NoName";
-            const nameParts = displayName.split(" ");
-            const name = nameParts[0];
-            const surname = nameParts.length > 1 ? nameParts[1] : "";
-
-            await setDoc(userDocRef, {
-              Name: name,
-              Surname: surname,
-              email: user.email,
-              photoUrl: user.photoURL || "",
-              creationTime: new Date(user.metadata.creationTime).toLocaleString(
-                "en-US",
-                { timeZone: "Asia/Baku" }
-              ),
-              lastSignInTime: new Date(
-                user.metadata.lastSignInTime
-              ).toLocaleString("en-US", { timeZone: "Asia/Baku" }),
-            });
-          } else {
-            await setDoc(
-              userDocRef,
-              {
-                lastSignInTime: new Date().toLocaleString("en-US", {
-                  timeZone: "Asia/Baku",
-                }),
-              },
-              { merge: true }
-            );
-          }
-
-          setAuthLoading(false);
-        } catch (error) {
-          console.error("Error:", error);
-          setAuthLoading(false);
+        if (!userData) { // userData yoksa Firestore'a yaz
+          const displayName = user.displayName || "NoName";
+          const nameParts = displayName.split(" ");
+          const name = nameParts[0];
+          const surname = nameParts.length > 1 ? nameParts[1] : "";
+  
+          setDoc(doc(myFS, PROFILE_COLLECTION, user.uid), {
+            Name: name,
+            Surname: surname,
+            email: user.email,
+            photoUrl: user.photoURL || "",
+            creationTime: new Date(user.metadata.creationTime).toLocaleString("en-US", { timeZone: "Asia/Baku" }),
+            lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }),
+          });
+        } else { // userData varsa sadece lastSignInTime'ı güncelle
+          const updatedUserData = { ...userData, lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }) };
+          queryClient.setQueryData(["user", user.uid], updatedUserData);
+          updateDoc(doc(myFS, PROFILE_COLLECTION, user.uid), { lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }) });
+  
         }
+        setAuthLoading(false);
       });
 
       return unsubscribe;
     }
-  }, [myAuth, myFS]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myAuth, userData]); // userData bağımlılığını ekledik
 
   const googleSignInFunction = async () => {
     try {
@@ -226,6 +230,9 @@ const AuthProvider = (props) => {
     googleSignIn: googleSignInFunction,
     githubSignIn: githubSignInFunction, // Add GitHub sign-in to the context
     firestore,
+    userData,
+    userLoading,
+    userError,
   };
 
   return (
