@@ -50,7 +50,7 @@ export const Articles = () => {
     }),
     []
   );
-  
+
   const fetchArticles = async () => {
     const articlesCollection = collection(firestore, "articles");
     const articlesQuery = query(
@@ -81,7 +81,7 @@ export const Articles = () => {
   useEffect(() => {
     fetchArticles();
     fetchTotalPages();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadMoreArticles = async (direction) => {
@@ -136,18 +136,23 @@ export const Articles = () => {
   const isAdmin = user && user.email === "alyvdev@gmail.com";
   const articleContentRef = useRef(null);
 
-  const { data: articles, isLoading } = useQuery(["articles"], async () => {
-    const querySnapshot = await getDocs(collection(firestore, "articles"));
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  }, {
-    staleTime: Infinity, // Verileri süresiz olarak önbellekte tut
-    refetchOnMount: false,      // Bileşen mount edildiğinde yeniden getirme
-    refetchOnWindowFocus: false, // Pencere odağa geldiğinde yeniden getirme
-    refetchOnReconnect: false,   // Bağlantı yeniden kurulduğunda yeniden getirme
-  });
+  const { data: articles,} = useQuery(
+    ["articles"],
+    async () => {
+      const querySnapshot = await getDocs(collection(firestore, "articles"));
+      return querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    },
+    {
+      staleTime: Infinity, // Verileri süresiz olarak önbellekte tut
+      refetchOnMount: false, // Bileşen mount edildiğinde yeniden getirme
+      refetchOnWindowFocus: false, // Pencere odağa geldiğinde yeniden getirme
+      refetchOnReconnect: false, // Bağlantı yeniden kurulduğunda yeniden getirme
+      cacheTime: Infinity, // Verileri süresiz olarak önbellekte tut
+    }
+  );
 
   const deleteArticle = async (id) => {
     if (!articles) return;
@@ -237,36 +242,10 @@ export const Articles = () => {
   }, [articles, searchQuery, selectedCategory, sortOrder, currentPage]);
 
   return (
-    <section className="p-5 flex flex-col overflow-y-auto w-full">
+    <section className="p-5 flex flex-col overflow-y-auto w-full relative">
       <ToastContainer position="top-center" autoClose={2000} />
 
-      {isLoading && (
-        <div className="w-full h-screen flex items-center justify-center">
-          <div className="text-center">
-            <svg
-              className="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            <p className="text-lg text-gray-700">Məqalələr yüklənir...</p>
-          </div>
-        </div>
-      )}
+      
 
       <div className="flex sm:flex-col lg:flex-row-reverse sm:items-start lg:items-center lg:justify-between gap-3 mb-4">
         <div className="relative">
@@ -333,8 +312,14 @@ export const Articles = () => {
           filteredAndSortedArticles.currentArticles.map((article) => (
             <div
               key={article.id}
-              onClick={() => navigate(`/articles/${article.id}`)}
-              className={`p-2 border-2 border-gray-950 bg-amber-50 shadow-lg rounded-xl relative sm:w-full lg:w-[49%] cursor-pointer ${
+              onClick={() => {
+                if (editArticleId !== article.id) {
+                  navigate(`/articles/${article.id}`);
+                }
+              }}
+              className={`p-2 border-2 border-gray-950 bg-amber-50 shadow-lg rounded-xl relative sm:w-full lg:${
+                editArticleId === article.id ? "w-full" : "w-[49%]"
+              } cursor-pointer ${
                 editArticleId === article.id ? "bg-gray-100" : ""
               }`}
             >
@@ -417,27 +402,53 @@ export const Articles = () => {
             </div>
           ))
         ) : (
-          <p>Məqalə yoxdur.</p>
+            <div className="absolute inset-0 z-50 w-full h-screen flex items-center justify-center">
+              <div className="text-center">
+                <svg
+                  className="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <p className="text-lg text-gray-700">Məqalələr yüklənir...</p>
+              </div>
+            </div>
         )}
       </div>
       {/* Pagination Controls */}
       <div className="flex items-center my-4 space-x-4">
-  <button
-    onClick={() => handlePagination("prev")}
-    disabled={currentPage === 1}
-    className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-  >
-    Əvvəl
-  </button>
-  <span className="font-medium">{currentPage} / {totalPages}</span>
-  <button
-    onClick={() => handlePagination("next")}
-    disabled={currentPage === totalPages}
-    className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-  >
-    Sonra
-  </button>
-</div>
+        <button
+          onClick={() => handlePagination("prev")}
+          disabled={currentPage === 1}
+          className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        >
+          Əvvəl
+        </button>
+        <span className="font-medium">
+          {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => handlePagination("next")}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        >
+          Sonra
+        </button>
+      </div>
     </section>
   );
 };

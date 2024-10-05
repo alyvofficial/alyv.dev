@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
@@ -6,8 +6,9 @@ import { useAuthContext } from "../../providers/AuthProvider";
 import { FaBars } from "react-icons/fa";
 
 export const Header = () => {
-  const { user, logout } = useAuthContext();
+  const { userData, logout } = useAuthContext();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null); // Ref for the menu container
 
   const handleProfileClick = () => {
     setMenuOpen(!menuOpen);
@@ -16,6 +17,27 @@ export const Header = () => {
   const handleNavLinkClick = () => {
     setMenuOpen(false);
   };
+
+
+   // useEffect to handle clicks outside the menu and profile container
+   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
+
 
   return (
     <header className="w-full  flex items-center justify-between bg-black px-5 py-2 relative">
@@ -46,85 +68,60 @@ export const Header = () => {
           />
         </svg>
       </NavLink>
-      {!user ? (
-        <div className="relative select-none">
-          <FaBars
-            size={20}
-            className="text-white"
-            onClick={handleProfileClick}
-          />
-          {menuOpen && (
-            <ul className="absolute right-0  p-3 mt-5 rounded-b-lg z-[999] bg-black">
-              <NavLink
-                to="/articles"
-                className="text-gray-500 hover:text-white"
-                onClick={handleNavLinkClick}
-              >
-                <li className="list-none">Məqalələr</li>
-              </NavLink>
-              <NavLink
-                to="/portfolio"
-                className="text-gray-500 hover:text-white"
-                onClick={handleNavLinkClick}
-              >
-                <li className="list-none">Portfolio</li>
-              </NavLink>
-
-              <NavLink
-                to="/auth/login"
-                className="text-gray-500 hover:text-white"
-                onClick={handleNavLinkClick}
-              >
-                <li className="list-none">Daxil ol</li>
-              </NavLink>
-            </ul>
-          )}
-        </div>
-      ) : (
-        <div className="relative">
-          <div
-            className="flex items-center justify-between p-1.5 gap-2.5 cursor-pointer rounded-lg"
-            onClick={handleProfileClick}
-          >
+        {/* Button to open the menu (conditionally rendered) */}
+      <div ref={menuRef} className="relative"> {/* Ref expanded here */}
+        {!userData ? (
+          <div className="relative select-none">
+            <FaBars size={20} className="text-white" onClick={handleProfileClick} />
+          </div>
+        ) : (
+          <div className="flex items-center justify-between p-1.5 gap-2.5 cursor-pointer rounded-lg" onClick={handleProfileClick}>
             <div className="w-10 h-10">
-              <img className="rounded-full" src={user.photoURL} alt="Profile" />
+              <img className="rounded-full" src={userData.photoUrl} alt="Profile" />
             </div>
-            <h4 className="text-sm font-bold text-white">{user.displayName}</h4>
+            <h4 className="text-sm font-bold text-white">{userData.Name} {userData.Surname}</h4>
             <FontAwesomeIcon
               className="text-lg cursor-pointer text-white"
               icon={faRightFromBracket}
-              onClick={logout}
+              onClick={logout} // Logout handled directly here
             />
           </div>
-          {menuOpen && (
-            <ul className="absolute right-0 p-3 mt-2 rounded-b-lg z-[999] bg-black">
-              <NavLink
-                to="/articles"
-                className="text-gray-500 hover:text-white"
-                onClick={handleNavLinkClick}
-              >
-                <li className="list-none">Məqalələr</li>
-              </NavLink>
-              <NavLink
-                to="/portfolio"
-                className="text-gray-500 hover:text-white"
-                onClick={handleNavLinkClick}
-              >
-                <li className="list-none">Portfolio</li>
-              </NavLink>
-              {user && user.email === "alyvdev@gmail.com" && (
-                <NavLink
-                  to="/add-article"
-                  className="text-gray-500 hover:text-white"
-                  onClick={handleNavLinkClick}
-                >
-                  <li className="list-none">Əlavə et</li>
+        )}
+
+        {/* The menu itself (conditionally rendered) */}
+        {menuOpen && (
+          <ul className="absolute right-6 top-10 p-3 mt-2 rounded-b-lg z-[999] bg-black">
+            {/* Menu items (conditionally rendered based on login status) */}
+            {!userData ? (
+              <>
+                <NavLink to="/articles" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
+                  <li className="list-none">Məqalələr</li>
                 </NavLink>
-              )}
-            </ul>
-          )}
-        </div>
-      )}
+                <NavLink to="/portfolio" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
+                  <li className="list-none">Portfolio</li>
+                </NavLink>
+                <NavLink to="/auth/login" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
+                  <li className="list-none">Daxil ol</li>
+                </NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink to="/articles" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
+                  <li className="list-none">Məqalələr</li>
+                </NavLink>
+                <NavLink to="/portfolio" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
+                  <li className="list-none">Portfolio</li>
+                </NavLink>
+                {userData && userData.email === "alyvdev@gmail.com" && (
+                  <NavLink to="/add-article" className="text-gray-500 hover:text-white" onClick={handleNavLinkClick}>
+                    <li className="list-none">Əlavə et</li>
+                  </NavLink>
+                )}
+              </>
+            )}
+          </ul>
+        )}
+      </div>
     </header>
   );
 };

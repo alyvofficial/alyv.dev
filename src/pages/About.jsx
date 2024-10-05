@@ -190,27 +190,27 @@ export const About = () => {
               </p>
               <div className="mb-2">
                 <p className="text-white">HTML / CSS</p>
-                <div className="h-2 bg-[#969696] w-full rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">JavaScript</p>
-                <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">React JS</p>
-                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">Bootstrap</p>
-                <div className="h-2 bg-[#969696] w-1/4 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">jQuery</p>
-                <div className="h-2 bg-[#969696] w-full rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">Tailwind CSS</p>
-                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-[85%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
             </div>
             <h2 className="sm:text-base lg:text-lg font-bold text-[#64ffda] mt-6 mb-3">
@@ -218,27 +218,27 @@ export const About = () => {
             </h2>
             <div className="mb-2">
               <p className="text-white">Adobe Photoshop</p>
-              <div className="h-2 bg-[#969696] w-full rounded-full mt-1"></div>
+              <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
             </div>
             <div className="mb-2">
               <p className="text-white">Adobe Illustrator</p>
-              <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1"></div>
+              <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
             </div>
             <div className="mb-2">
               <p className="text-white">Adobe InDesign</p>
-              <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1"></div>
+              <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
             </div>
             <div className="mb-2">
               <p className="text-white">After Effects</p>
-              <div className="h-2 bg-[#969696] w-1/4 rounded-full mt-1"></div>
+              <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
             </div>
             <div className="mb-2">
               <p className="text-white">Figma</p>
-              <div className="h-2 bg-[#969696] w-full rounded-full mt-1"></div>
+              <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
             </div>
             <div className="mb-2">
               <p className="text-white">Blender</p>
-              <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1"></div>
+              <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
             </div>
 
             <div>
@@ -247,27 +247,27 @@ export const About = () => {
               </p>
               <div className="mb-2">
                 <p className="text-white">Helpdesk</p>
-                <div className="h-2 bg-[#969696] w-full rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">Python</p>
-                <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">Pandas</p>
-                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">BeautifulSoup</p>
-                <div className="h-2 bg-[#969696] w-1/4 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-1/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">Office apps</p>
-                <div className="h-2 bg-[#969696] w-full rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">Firebase</p>
-                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-[85%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
             </div>
           </div>
@@ -341,15 +341,15 @@ export const About = () => {
               </h2>
               <div className="mb-2">
                 <p className="text-white">Azərbaycan dili</p>
-                <div className="h-2 bg-[#969696] w-full rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">İngilis dili (B2)</p>
-                <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div>
                 <p className="text-white">Rus dili (A1)</p>
-                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1"></div>
+                <div className="h-2 bg-[#969696] w-[10%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
             </div>
             <div className="mt-8">

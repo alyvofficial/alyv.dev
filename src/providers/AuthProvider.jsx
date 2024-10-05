@@ -1,4 +1,3 @@
-// AuthProvider.jsx
 import {
   createContext,
   useCallback,
@@ -14,7 +13,13 @@ import {
   signInWithPopup,
   GithubAuthProvider,
 } from "firebase/auth";
-import { doc, getDoc, setDoc, getFirestore, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  getFirestore,
+} from "firebase/firestore";
 import { useFirebaseContext } from "./FirebaseProvider";
 import { useQuery, useQueryClient } from "react-query";
 
@@ -31,29 +36,25 @@ const AuthProvider = (props) => {
   const [authErrorMessages, setAuthErrorMessages] = useState();
   const { children } = props;
 
-
+  // useQuery to fetch user data only when user is available
   const fetchUserData = async (userId) => {
     const userDocRef = doc(myFS, PROFILE_COLLECTION, userId);
     const docSnap = await getDoc(userDocRef);
     return docSnap.data();
   };
 
-  const { data: userData, isLoading: userLoading, error: userError } = useQuery(
-    ["user", user?.uid],
-    () => fetchUserData(user?.uid),
-    {
-      enabled: !!user,
-      staleTime: Infinity,
-      cacheTime: Infinity,
-      // onSuccess: (data) => {
-      //   if (data) {
-      //     const updatedUserData = { ...data, lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }) };
-      //     queryClient.setQueryData(["user", user?.uid], updatedUserData);
-      //     // updateDoc(doc(myFS, PROFILE_COLLECTION, user.uid), { lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }) });
-      //   }
-      // }
-    }
-  );
+  const {
+    data: userData,
+    isLoading: userLoading,
+    error: userError,
+  } = useQuery(["user", user?.uid], () => fetchUserData(user?.uid), {
+    enabled: !!user && !queryClient.getQueryData(["user", user?.uid]), // Trigger only if user is available and no cached data
+    staleTime: Infinity, // Verileri süresiz olarak önbellekte tut
+    refetchOnMount: false, // Bileşen mount edildiğinde yeniden getirme
+    refetchOnWindowFocus: false, // Pencere odağa geldiğinde yeniden getirme
+    refetchOnReconnect: false, // Bağlantı yeniden kurulduğunda yeniden getirme
+    cacheTime: Infinity, // Verileri süresiz olarak önbellekte tut
+  });
 
   const logoutFunction = useCallback(async () => {
     try {
@@ -72,42 +73,63 @@ const AuthProvider = (props) => {
 
   useEffect(() => {
     if (myAuth) {
-      const unsubscribe = onAuthStateChanged(myAuth, (user) => {
+      const unsubscribe = onAuthStateChanged(myAuth, async (user) => {
         if (!user) {
-          // ... (user yoksa işlemler)
+          document.title = "ALYV Dev";
+          setUser(null);
+          setAuthLoading(false);
           return;
         }
 
         setUser(user);
         document.title = `${user.email} - ALYV Dev`;
 
-        if (!userData) { // userData yoksa Firestore'a yaz
+        const cachedUserData = queryClient.getQueryData(["user", user.uid]);
+
+        if (!cachedUserData) {
+          // Only if the user data is not already in the cache, write to Firestore
           const displayName = user.displayName || "NoName";
           const nameParts = displayName.split(" ");
           const name = nameParts[0];
           const surname = nameParts.length > 1 ? nameParts[1] : "";
-  
-          setDoc(doc(myFS, PROFILE_COLLECTION, user.uid), {
+
+          const newUserDoc = {
             Name: name,
             Surname: surname,
             email: user.email,
             photoUrl: user.photoURL || "",
-            creationTime: new Date(user.metadata.creationTime).toLocaleString("en-US", { timeZone: "Asia/Baku" }),
-            lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }),
+            creationTime: new Date(user.metadata.creationTime).toLocaleString(
+              "en-US",
+              { timeZone: "Asia/Baku" }
+            ),
+            lastSignInTime: new Date().toLocaleString("en-US", {
+              timeZone: "Asia/Baku",
+            }),
+          };
+
+          await setDoc(doc(myFS, PROFILE_COLLECTION, user.uid), newUserDoc);
+          queryClient.setQueryData(["user", user.uid], newUserDoc); // Cache the user data
+        } else {
+          // Update only the lastSignInTime if user data exists
+          const updatedUserData = {
+            ...cachedUserData,
+            lastSignInTime: new Date().toLocaleString("en-US", {
+              timeZone: "Asia/Baku",
+            }),
+          };
+
+          await updateDoc(doc(myFS, PROFILE_COLLECTION, user.uid), {
+            lastSignInTime: updatedUserData.lastSignInTime,
           });
-        } else { // userData varsa sadece lastSignInTime'ı güncelle
-          const updatedUserData = { ...userData, lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }) };
-          queryClient.setQueryData(["user", user.uid], updatedUserData);
-          updateDoc(doc(myFS, PROFILE_COLLECTION, user.uid), { lastSignInTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Baku" }) });
-  
+          queryClient.setQueryData(["user", user.uid], updatedUserData); // Update cached data
         }
+
         setAuthLoading(false);
       });
 
-      return unsubscribe;
+      return () => unsubscribe();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myAuth, userData]); // userData bağımlılığını ekledik
+  }, [myAuth, queryClient, myFS]); // Removed userData dependency to avoid unnecessary calls
 
   const googleSignInFunction = async () => {
     try {
@@ -229,16 +251,17 @@ const AuthProvider = (props) => {
     logout: logoutFunction,
     googleSignIn: googleSignInFunction,
     githubSignIn: githubSignInFunction, // Add GitHub sign-in to the context
-    firestore,
     userData,
     userLoading,
     userError,
+    firestore,
   };
 
   return (
     <AuthContext.Provider value={theValues}>{children}</AuthContext.Provider>
   );
 };
+
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
@@ -252,7 +275,6 @@ const useAuthContext = () => {
 
   return context;
 };
-
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { AuthProvider, useAuthContext };
