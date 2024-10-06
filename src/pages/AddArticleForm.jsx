@@ -5,9 +5,10 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "jodit";
 import JoditEditor from "jodit-react";
+import { AddProject } from "./AddProject";
 
 export const AddArticleForm = () => {
-  const { user, firestore } = useAuthContext();
+  const { userData, firestore } = useAuthContext();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const editorRef = useRef(null);
@@ -21,7 +22,7 @@ export const AddArticleForm = () => {
     "Digər",
   ]);
 
-  const isAdmin = user && user.email === "alyvdev@gmail.com";
+  const isAdmin = userData && userData.email === "alyvdev@gmail.com";
 
   const config = useMemo(() => {
     return {
@@ -53,7 +54,7 @@ export const AddArticleForm = () => {
         title,
         content,
         category,
-        userId: user.uid,
+        userId: userData.uid,
         createdAt,
         likes: [],
       });
@@ -74,7 +75,7 @@ export const AddArticleForm = () => {
       <ToastContainer position="top-center" autoClose={2000} />
 
       {isAdmin ? (
-        <div className="h-full">
+        <div className="h-full mb-3">
           <form
             onSubmit={addArticle}
             className="space-y-4 h-full max-w-full border-black"
@@ -118,7 +119,7 @@ export const AddArticleForm = () => {
 
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
             >
               Əlavə et
             </button>
@@ -127,6 +128,8 @@ export const AddArticleForm = () => {
       ) : (
         <p>Yalnız adminlər məqalə əlavə edə bilər.</p>
       )}
+      <hr />
+      <AddProject />
     </section>
   );
 };

@@ -18,7 +18,6 @@ import {
   getDoc,
   setDoc,
   updateDoc,
-  getFirestore,
 } from "firebase/firestore";
 import { useFirebaseContext } from "./FirebaseProvider";
 import { useQuery, useQueryClient } from "react-query";
@@ -28,8 +27,7 @@ export const AuthContext = createContext({});
 const PROFILE_COLLECTION = "users";
 
 const AuthProvider = (props) => {
-  const { myAuth, myFS } = useFirebaseContext();
-  const firestore = getFirestore();
+  const { myAuth, myFS, myStorage } = useFirebaseContext();
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -105,6 +103,7 @@ const AuthProvider = (props) => {
             lastSignInTime: new Date().toLocaleString("en-US", {
               timeZone: "Asia/Baku",
             }),
+            uid: user.uid,
           };
 
           await setDoc(doc(myFS, PROFILE_COLLECTION, user.uid), newUserDoc);
@@ -159,6 +158,7 @@ const AuthProvider = (props) => {
             "en-US",
             { timeZone: "Asia/Baku" }
           ),
+          uid: user.uid,
         };
 
         await setDoc(userDocRef, userDocData);
@@ -201,6 +201,7 @@ const AuthProvider = (props) => {
             "en-US",
             { timeZone: "Asia/Baku" }
           ),
+          uid: user.uid,
         };
 
         await setDoc(userDocRef, userDocData);
@@ -254,7 +255,8 @@ const AuthProvider = (props) => {
     userData,
     userLoading,
     userError,
-    firestore,
+    firestore: myFS,
+    myStorage,
   };
 
   return (

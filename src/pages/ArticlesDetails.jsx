@@ -43,7 +43,7 @@ const toggleLike = async ({ firestore, articleId, user, likes }) => {
 
 export const ArticlesDetails = () => {
   const { id } = useParams();
-  const { user, firestore } = useAuthContext();
+  const { userData, firestore } = useAuthContext();
   const queryClient = useQueryClient();
 
   // Firestore'dan makaleyi çek
@@ -72,14 +72,14 @@ export const ArticlesDetails = () => {
   });
 
   const handleLike = () => {
-    if (!user) {
+    if (!userData) {
       toast.error("Zəhmət olmasa, öncə giriş edin!");
       return;
     }
     mutation.mutate({
       firestore,
       articleId: article.id,
-      user,
+      userData,
       likes: article.likes,
     });
   };
@@ -164,7 +164,7 @@ export const ArticlesDetails = () => {
 
                         <div className="flex items-center justify-between mt-6 border-t pt-4">
                             <div className="flex items-center gap-4 text-gray-600">
-                                {user ? (
+                                {userData ? (
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -172,7 +172,7 @@ export const ArticlesDetails = () => {
                                         }}
                                         className="flex items-center gap-1 hover:text-blue-500 transition-colors"
                                     >
-                                        {article.likes.includes(user.uid) ? (
+                                        {article.likes.includes(userData.uid) ? (
                                             <BiSolidLike className="text-blue-500 w-6 h-6" />
                                         ) : (
                                             <BiLike className="w-6 h-6" />

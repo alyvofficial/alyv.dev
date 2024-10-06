@@ -29,16 +29,16 @@ const fetchComments = async (firestore, articleId) => {
 const addComment = async ({
   firestore,
   articleId,
-  user,
+  userData,
   comment,
   parentCommentId = null,
 }) => {
   const articleRef = doc(firestore, "articles", articleId);
   const newComment = {
     id: Date.now(), // Ensure a unique ID for each comment
-    userId: user.uid,
-    userName: user.displayName,
-    userPhoto: user.photoURL,
+    userId: userData.uid,
+    userName:  [userData.Name, userData.Surname].join(" "),
+    userPhoto: userData.photoUrl,
     content: comment,
     date: new Date().toISOString(),
     parentCommentId, // If it's a reply, include parent comment ID
@@ -69,7 +69,7 @@ const deleteComment = async ({ firestore, articleId, comment, allReplies }) => {
 
 // Comments component
 export const Comments = ({ articleId }) => {
-  const { user, firestore } = useAuthContext();
+  const { userData, firestore } = useAuthContext();
   const [newComment, setNewComment] = useState("");
   const [replyToCommentId, setReplyToCommentId] = useState(null); // Track which comment is being replied to
   const [replyContent, setReplyContent] = useState({}); // Track reply content for each parent comment
@@ -113,7 +113,7 @@ export const Comments = ({ articleId }) => {
   // Handle comment submission
   const handleCommentSubmit = (e) => {
     e.preventDefault();
-    if (!user) {
+    if (!userData) {
       toast.error("Zəhmət olmasa, öncə giriş edin!");
       return;
     }
@@ -122,7 +122,7 @@ export const Comments = ({ articleId }) => {
     commentMutation.mutate({
       firestore,
       articleId: articleId,
-      user,
+      userData,
       comment: newComment,
       parentCommentId: null,
     });
@@ -131,7 +131,7 @@ export const Comments = ({ articleId }) => {
   // Handle reply submission
   const handleReplySubmit = (e, parentCommentId) => {
     e.preventDefault();
-    if (!user) {
+    if (!userData) {
       toast.error("Zəhmət olmasa, öncə giriş edin!");
       return;
     }
@@ -140,7 +140,7 @@ export const Comments = ({ articleId }) => {
     commentMutation.mutate({
       firestore,
       articleId: articleId,
-      user,
+      userData,
       comment: replyContent[parentCommentId], // Get the reply content for this specific parent
       parentCommentId: parentCommentId,
     });
@@ -157,7 +157,7 @@ export const Comments = ({ articleId }) => {
   };
 
   const handleDeleteComment = (comment) => {
-    if (user.email === "alyvdev@gmail.com" || user.uid === comment.userId) {
+    if (userData.email === "alyvdev@gmail.com" || userData.uid === comment.userId) {
       // Find all replies to this comment
       const replies = comments.filter((c) => c.parentCommentId === comment.id);
       deleteMutation.mutate({
@@ -212,7 +212,7 @@ export const Comments = ({ articleId }) => {
             )}
             <div className="flex gap-2">
               {/* Reply button */}
-              {user && (
+              {userData && (
                 <button
                   onClick={() => handleReplyClick(comment.id)}
                   className="text-blue-600 hover:underline focus:outline-none focus:ring focus:ring-blue-300 transition text-sm"
@@ -222,9 +222,9 @@ export const Comments = ({ articleId }) => {
               )}
 
               {/* Delete button for admin/comment author */}
-              {user &&
-                (user.email === "alyvdev@gmail.com" ||
-                  user.uid === comment.userId) && (
+              {userData &&
+                (userData.email === "alyvdev@gmail.com" ||
+                  userData.uid === comment.userId) && (
                   <button
                     onClick={() => handleDeleteComment(comment)}
                     className="text-red-500 hover:underline transition duration-200 text-sm"
@@ -284,7 +284,7 @@ export const Comments = ({ articleId }) => {
     <div>
       <ToastContainer position="top-center" autoClose={2000} />
       <div className="p-2 bg-gray-50 rounded-lg shadow-md" id="comments">
-        {user ? (
+        {userData ? (
           <form onSubmit={handleCommentSubmit} className="mt-4">
             <textarea
               value={newComment}

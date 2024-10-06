@@ -39,7 +39,7 @@ export const About = () => {
       <div className="px-4 py-4">
         <div className="flex flex-col sm:flex-col lg:flex-row gap-8">
           {/* Sol Bölüm */}
-          <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
+          <div id='contact' className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
             <h2 className="text-xl font-bold text-[#64ffda] mb-4">ƏLAQƏ</h2>
             <div className="mb-4">
               <p className="text-white">Mobil nömrə</p>
@@ -352,7 +352,7 @@ export const About = () => {
                 <div className="h-2 bg-[#969696] w-[10%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
             </div>
-            <div className="mt-8">
+            <div id='about' className="mt-8">
               <h2 className="text-xl font-bold text-[#64ffda] mb-4">
                 HAQQIMDA
               </h2>

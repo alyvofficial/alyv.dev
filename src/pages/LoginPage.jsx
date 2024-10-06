@@ -3,9 +3,9 @@ import { useAuthContext } from "../providers/AuthProvider";
 import { Navigate } from "react-router-dom";
 
 export const LoginPage = () => {
-    const { googleSignIn, githubSignIn, user } = useAuthContext();
+    const { googleSignIn, githubSignIn, userData } = useAuthContext();
     
-if (user) {
+if (userData) {
     return <Navigate to="/articles" />;
 }
 
