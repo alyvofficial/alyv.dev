@@ -3,24 +3,36 @@ import { useAuthContext } from "../providers/AuthProvider";
 import {
   collection,
   getDocs,
+  doc,
+  deleteDoc,
   query,
   orderBy,
   limit,
   startAfter,
   endBefore,
   getCountFromServer,
+  updateDoc,
 } from "firebase/firestore";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "react-query";
+import { ref, deleteObject } from "firebase/storage";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const Portfolio = () => {
-  const { userData, firestore } = useAuthContext();
+  const { firestore ,userData, myStorage } = useAuthContext();
   const [projectType, setProjectType] = useState("graphic");
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 4;
   const [lastVisible, setLastVisible] = useState(null);
   const [firstVisible, setFirstVisible] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
+
+  // Düzenleme için gereken state değişkenleri
+  const [editingProject, setEditingProject] = useState(null);
+  const [newCaption, setNewCaption] = useState("");
+  const [newLink, setNewLink] = useState("");
 
 
   const fetchProjects = async (
@@ -99,6 +111,70 @@ export const Portfolio = () => {
     }
   );
 
+  // Proje silme fonksiyonu
+  const handleDeleteProject = async (project) => {
+    if ( userData && userData.email === "alyvdev@gmail.com") {
+      try {
+        // Firestore'dan projeyi sil
+        const projectDocRef = doc(
+          firestore,
+          projectType === "web" ? "webProjects" : "graphicDesigns",
+          project.id
+        );
+        await deleteDoc(projectDocRef);
+
+        // Firebase Storage'dan projeye ait resmi sil
+        const imageRef = ref(myStorage, project.imageUrl);
+        await deleteObject(imageRef);
+
+        // Silme işleminden sonra projeleri yeniden yükle
+        toast.success("Proyekt uğurla silindi");
+        await fetchProjects(projectType, projectsPerPage);
+      } catch (error) {
+        console.error("Proyekt güncəllənərkən xəta baş verdi:", error);
+        toast.error("Proyekt güncəllənərkən xəta baş verdi");
+      }
+    } else {
+      toast.error("Proyekti silməyə icazəniz yoxdu!");
+    }
+  };
+
+  // Proje güncelleme fonksiyonu
+  const handleUpdateProject = async (project) => {
+    if (userData && userData.email === "alyvdev@gmail.com") {
+        try {
+            const projectDocRef = doc(
+                firestore,
+                projectType === "web" ? "webProjects" : "graphicDesigns",
+                project.id
+            );
+
+            // Firestore'da güncelleme
+            await updateDoc(projectDocRef, {
+                caption: newCaption,
+                [projectType === "web" ? "githubLink" : "graphicLink"]: newLink,
+            });
+
+            // Ön bellekte güncelleme
+            const updatedProjects = projects.map((p) =>
+                p.id === project.id ? { ...p, caption: newCaption, [projectType === "web" ? "githubLink" : "graphicLink"]: newLink } : p
+            );
+
+            // Yeni güncellenmiş projeleri setState ile güncelle
+            setEditingProject(updatedProjects);
+            toast.success("Proyekt uğurla güncəlləndi");
+            setEditingProject(null);
+        } catch (error) {
+            console.error("Proyekt güncəllənərkən xəta baş verdi:", error);
+            toast.error("Proyekt güncəllənərkən xəta baş verdi");
+        }
+    } else {
+      toast.error("Faylı güncəlləməyə icazəniz yoxdu!");
+    }
+};
+
+
+
   useEffect(() => {
     fetchTotalPages(projectType);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,6 +189,7 @@ export const Portfolio = () => {
   };
   return (
     <section className="w-full mx-auto p-4 bg-black min-h-screen">
+      <ToastContainer position="top-center" autoClose={2000} />
       <label className="block mb-4">
         <select
           value={projectType}
@@ -169,11 +246,30 @@ export const Portfolio = () => {
                   backgroundImage: `url(${project.imageUrl})`,
                 }}
               >
+                {/* Düzenleme butonu */}
+                {userData && userData.email === "alyvdev@gmail.com" && (
+                  <button
+                    onClick={() => {
+                      setEditingProject(project);
+                      setNewCaption(project.caption);
+                      setNewLink(projectType === "web" ? project.githubLink : project.graphicLink);
+                    }}
+                    className="absolute z-50 top-2 left-2 text-xl text-white p-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity"
+                  >
+                    <MdEdit />
+                  </button>
+                )}
+                {/* Hover ile silme butonunu göster */}
+                {userData && userData.email === "alyvdev@gmail.com" && (
+                  <button
+                    onClick={() => handleDeleteProject(project)}
+                    className="absolute z-50 top-2 right-2 text-xl text-red-600 p-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity"
+                  >
+                    <MdDelete />
+                  </button>
+                )}
                 <div className="absolute inset-0 bg-transparent opacity-0 hover:bg-black/50 hover:opacity-100 flex items-center justify-center transition">
                   <div className="flex flex-col items-center">
-                    <div className="text-xl text-center text-white">
-                      {project.caption} · {userData.Name} {userData.Surname}
-                    </div>
                     <NavLink
                       to={
                         projectType === "web"
@@ -181,12 +277,45 @@ export const Portfolio = () => {
                           : project.graphicLink
                       }
                       target="_blank"
-                      className="mt-2 bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af] text-white text-sm font-bold py-2 px-3 rounded-lg shadow-lg transition-transform duration-300 transform hover:scale-105"
+                      className=" text-white text-2xl font-bold shadow-lg transition-transform duration-300 transform hover:scale-105 underline"
                     >
-                      Baxmaq
+                      {project.caption}
                     </NavLink>
                   </div>
                 </div>
+                {editingProject && editingProject.id === project.id && (
+                  <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                    <div className="p-4 rounded-lg bg-white">
+                      <h3 className="text-xl font-bold">Düzenle</h3>
+                      <input
+                        type="text"
+                        value={newCaption}
+                        onChange={(e) => setNewCaption(e.target.value)}
+                        placeholder="Yeni Başlık"
+                        className="p-2 border rounded mb-2 w-full"
+                      />
+                      <input
+                        type="text"
+                        value={newLink}
+                        onChange={(e) => setNewLink(e.target.value)}
+                        placeholder="Yeni Link"
+                        className="p-2 border rounded mb-2 w-full"
+                      />
+                      <button
+                        onClick={() => handleUpdateProject(project)}
+                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                      >
+                        Güncelle
+                      </button>
+                      <button
+                        onClick={() => setEditingProject(null)}
+                        className="ml-2 px-4 py-2 bg-gray-300 rounded"
+                      >
+                        İptal
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))
           )}
@@ -199,7 +328,7 @@ export const Portfolio = () => {
             disabled={currentPage === 1}
             className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 disabled:hidden disabled:cursor-not-allowed"
           >
-            Əvvəl
+            Əvvəlki
           </button>
           <span className="font-medium text-white">
             {currentPage} / {totalPages}

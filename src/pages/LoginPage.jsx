@@ -6,7 +6,7 @@ export const LoginPage = () => {
     const { googleSignIn, githubSignIn, userData } = useAuthContext();
     
 if (userData) {
-    return <Navigate to="/articles" />;
+    return <Navigate to="/" />;
 }
 
   return (

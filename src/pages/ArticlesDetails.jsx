@@ -13,7 +13,6 @@ import { BiLike, BiSolidLike } from "react-icons/bi";
 import { IoShareOutline, IoArrowBack } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { FaComments } from "react-icons/fa";
 import { Comments } from "./Comments";
 
 // Firestore'dan makale verisini çekmek için fonksiyon
@@ -28,15 +27,15 @@ const fetchArticle = async (firestore, id) => {
 };
 
 // Beğeni toggle işlemi için fonksiyon
-const toggleLike = async ({ firestore, articleId, user, likes }) => {
+const toggleLike = async ({ firestore, articleId, userData, likes }) => {
   const articleRef = doc(firestore, "articles", articleId);
-  if (likes.includes(user.uid)) {
+  if (likes.includes(userData.uid)) {
     await updateDoc(articleRef, {
-      likes: arrayRemove(user.uid),
+      likes: arrayRemove(userData.uid),
     });
   } else {
     await updateDoc(articleRef, {
-      likes: arrayUnion(user.uid),
+      likes: arrayUnion(userData.uid),
     });
   }
 };
@@ -48,17 +47,17 @@ export const ArticlesDetails = () => {
 
   // Firestore'dan makaleyi çek
   const { data: article, isLoading } = useQuery(
-  ["article", id],
-  () => fetchArticle(firestore, id),
-  {
-    staleTime: Infinity,
-    cacheTime: Infinity,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    onError: (error) => toast.error(error.message),
-  }
-);
+    ["article", id],
+    () => fetchArticle(firestore, id),
+    {
+      staleTime: Infinity,
+      cacheTime: Infinity,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      onError: (error) => toast.error(error.message),
+    }
+  );
 
   // Beğeni işlevi için mutation kullan
   const mutation = useMutation(toggleLike, {
@@ -94,8 +93,7 @@ export const ArticlesDetails = () => {
     if (navigator.share) {
       navigator
         .share(shareData)
-        .then(() => {
-        })
+        .then(() => {})
         .catch((error) => {
           toast.error("Paylaşım uğursuz oldu!");
           console.error("Paylaşım xətası:", error);
@@ -135,71 +133,67 @@ export const ArticlesDetails = () => {
   }
 
   return (
-    <section className="bg-white shadow-md rounded-lg overflow-hidden mx-auto max-w-5xl">
-            <ToastContainer position="top-center" autoClose={2000} />
-            {article ? (
-                <div className="p-6">
-                    <div className="flex items-center justify-between text-gray-600 mb-4">
-                        <NavLink to="/articles" className="flex items-center transition-colors hover:text-blue-500">
-                            <IoArrowBack className="w-6 h-6 mr-2" /> Geri
-                        </NavLink>
-                        <button
-                            onClick={handleShare}
-                            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                        >
-                            <IoShareOutline className="w-6 h-6 text-gray-600" />
-                        </button>
-                    </div>
+    <section className="bg-white shadow-md rounded-lg overflow-hidden mx-auto max-w-6xl">
+      <ToastContainer position="top-center" autoClose={2000} />
+      {article ? (
+        <div className="p-6">
+          <div className="flex items-center justify-between text-gray-600 mb-4">
+            <NavLink
+              to="/articles"
+              className="flex items-center transition-colors hover:text-blue-500"
+            >
+              <IoArrowBack className="w-6 h-6 mr-2" /> Geri
+            </NavLink>
+            <button
+              onClick={handleShare}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <IoShareOutline className="w-6 h-6 text-gray-600" />
+            </button>
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              {article.title}
+            </h2>
+            <p className="text-sm text-gray-500 mb-4">{article.category}</p>
+            <div
+              className="prose lg:prose-xl max-w-none" // Prose for better typography
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
 
-                    <div>
-                        <h2 className="text-3xl font-bold text-gray-800 mb-2">{article.title}</h2>
-                        <p className="text-sm text-gray-500 mb-4">
-                            {article.category}
-                        </p>
-                        <div
-                            className="prose lg:prose-xl max-w-none" // Prose for better typography
-                            dangerouslySetInnerHTML={{ __html: article.content }}
-                        />
-
-
-                        <div className="flex items-center justify-between mt-6 border-t pt-4">
-                            <div className="flex items-center gap-4 text-gray-600">
-                                {userData ? (
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleLike();
-                                        }}
-                                        className="flex items-center gap-1 hover:text-blue-500 transition-colors"
-                                    >
-                                        {article.likes.includes(userData.uid) ? (
-                                            <BiSolidLike className="text-blue-500 w-6 h-6" />
-                                        ) : (
-                                            <BiLike className="w-6 h-6" />
-                                        )}
-                                        <span>{article.likes.length}</span>
-                                    </button>
-                                ) : (
-                                    <BiLike className="w-6 h-6 text-gray-400 cursor-not-allowed" />
-                                )}
-
-                                <a href="" className="flex items-center gap-1 hover:text-blue-500 transition-colors">
-                                    <FaComments className="w-5 h-5" /> {/* Smaller icon */}
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                    <hr className="my-6 border-gray-200" /> {/* Styled horizontal rule */}
-                    <Comments articleId={article.id} />
-                </div>
-            ) : (
-                <div className="text-center py-12">
-                    <h2 className="text-2xl font-semibold text-gray-600">Məqalə tapılmadı!</h2>
-                </div>
-            )}
-        </section>
+            <div className="flex items-center justify-between mt-6 border-t pt-4">
+              <div className="flex items-center gap-4 text-gray-600">
+                {userData ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLike();
+                    }}
+                    className="flex items-center gap-1 hover:text-blue-500 transition-colors"
+                  >
+                    {article.likes.includes(userData.uid) ? (
+                      <BiSolidLike className="text-blue-500 w-6 h-6" />
+                    ) : (
+                      <BiLike className="w-6 h-6" />
+                    )}
+                    <span>{article.likes.length}</span>
+                  </button>
+                ) : (
+                  <BiLike className="w-6 h-6 text-gray-400 cursor-not-allowed" />
+                )}
+              </div>
+            </div>
+          </div>
+          <hr className="my-6 border-gray-200" /> {/* Styled horizontal rule */}
+          <Comments articleId={article.id} />
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-semibold text-gray-600">
+            Məqalə tapılmadı!
+          </h2>
+        </div>
+      )}
+    </section>
   );
 };
