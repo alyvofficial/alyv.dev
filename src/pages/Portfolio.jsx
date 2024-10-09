@@ -1,4 +1,4 @@
-import { useState, useEffect, } from "react";
+import { useState, useEffect } from "react";
 import { useAuthContext } from "../providers/AuthProvider";
 import {
   collection,
@@ -17,14 +17,15 @@ import { NavLink } from "react-router-dom";
 import { useQuery } from "react-query";
 import { ref, deleteObject } from "firebase/storage";
 import { MdDelete, MdEdit } from "react-icons/md";
+import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export const Portfolio = () => {
-  const { firestore ,userData, myStorage } = useAuthContext();
+  const { firestore, userData, myStorage } = useAuthContext();
   const [projectType, setProjectType] = useState("graphic");
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 4;
+  const projectsPerPage = 8;
   const [lastVisible, setLastVisible] = useState(null);
   const [firstVisible, setFirstVisible] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
@@ -33,7 +34,6 @@ export const Portfolio = () => {
   const [editingProject, setEditingProject] = useState(null);
   const [newCaption, setNewCaption] = useState("");
   const [newLink, setNewLink] = useState("");
-
 
   const fetchProjects = async (
     projectType,
@@ -92,28 +92,29 @@ export const Portfolio = () => {
     setTotalPages(calculatedTotalPages);
   };
 
-
   const { data: projects, isLoading } = useQuery(
     ["projects", projectType, currentPage],
     () =>
       fetchProjects(
         projectType,
         projectsPerPage,
-        currentPage > 1 ? lastVisible : null,  // next page
-        currentPage > 1 ? firstVisible : null  // previous page
+        currentPage > 1 ? lastVisible : null, // next page
+        currentPage > 1 ? firstVisible : null // previous page
       ),
     {
-      staleTime: Infinity, // Verileri süresiz olarak önbellekte tut
-      refetchOnMount: false, // Bileşen mount edildiğinde yeniden getirme
-      refetchOnWindowFocus: false, // Pencere odağa geldiğinde yeniden getirme
-      refetchOnReconnect: false, // Bağlantı yeniden kurulduğunda yeniden getirme
-      cacheTime: Infinity,
+      enabled: !!projectType && !!currentPage, // sadece projectType ve currentPage dolu olduğunda istek yap
+      staleTime: Infinity, // Veriyi süresiz olarak önbellekte tut
+      refetchOnMount: false, // Bileşen montaj edildiğinde yeniden istek yapma
+      refetchOnWindowFocus: false, // Pencere odağa geldiğinde yeniden istek yapma
+      refetchOnReconnect: false, // Bağlantı yeniden kurulduğunda istek yapma
+      cacheTime: Infinity, // Veriyi süresiz olarak önbellekte tut
     }
   );
+  
 
   // Proje silme fonksiyonu
   const handleDeleteProject = async (project) => {
-    if ( userData && userData.email === "alyvdev@gmail.com") {
+    if (userData && userData.email === "alyvdev@gmail.com") {
       try {
         // Firestore'dan projeyi sil
         const projectDocRef = doc(
@@ -142,42 +143,46 @@ export const Portfolio = () => {
   // Proje güncelleme fonksiyonu
   const handleUpdateProject = async (project) => {
     if (userData && userData.email === "alyvdev@gmail.com") {
-        try {
-            const projectDocRef = doc(
-                firestore,
-                projectType === "web" ? "webProjects" : "graphicDesigns",
-                project.id
-            );
+      try {
+        const projectDocRef = doc(
+          firestore,
+          projectType === "web" ? "webProjects" : "graphicDesigns",
+          project.id
+        );
 
-            // Firestore'da güncelleme
-            await updateDoc(projectDocRef, {
+        // Firestore'da güncelleme
+        await updateDoc(projectDocRef, {
+          caption: newCaption,
+          [projectType === "web" ? "githubLink" : "graphicLink"]: newLink,
+        });
+
+        // Ön bellekte güncelleme
+        const updatedProjects = projects.map((p) =>
+          p.id === project.id
+            ? {
+                ...p,
                 caption: newCaption,
                 [projectType === "web" ? "githubLink" : "graphicLink"]: newLink,
-            });
+              }
+            : p
+        );
 
-            // Ön bellekte güncelleme
-            const updatedProjects = projects.map((p) =>
-                p.id === project.id ? { ...p, caption: newCaption, [projectType === "web" ? "githubLink" : "graphicLink"]: newLink } : p
-            );
-
-            // Yeni güncellenmiş projeleri setState ile güncelle
-            setEditingProject(updatedProjects);
-            toast.success("Proyekt uğurla güncəlləndi");
-            setEditingProject(null);
-        } catch (error) {
-            console.error("Proyekt güncəllənərkən xəta baş verdi:", error);
-            toast.error("Proyekt güncəllənərkən xəta baş verdi");
-        }
+        // Yeni güncellenmiş projeleri setState ile güncelle
+        setEditingProject(updatedProjects);
+        toast.success("Proyekt uğurla güncəlləndi");
+        setEditingProject(null);
+      } catch (error) {
+        console.error("Proyekt güncəllənərkən xəta baş verdi:", error);
+        toast.error("Proyekt güncəllənərkən xəta baş verdi");
+      }
     } else {
       toast.error("Faylı güncəlləməyə icazəniz yoxdu!");
     }
-};
-
-
+  };
 
   useEffect(() => {
     fetchTotalPages(projectType);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectType]);
 
   const handlePagination = async (direction) => {
@@ -205,32 +210,32 @@ export const Portfolio = () => {
         <div className="flex flex-wrap items-center gap-3">
           {isLoading ? ( // Check if loading
             <div className="absolute inset-0 z-50 w-full h-screen flex items-center justify-center">
-            <div className="text-center">
-              <svg
-                className="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              <p className="text-lg text-gray-700">Proyektlər yüklənir...</p>
+              <div className="text-center">
+                <svg
+                  className="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <p className="text-lg text-gray-700">Proyektlər yüklənir...</p>
+              </div>
             </div>
-          </div>
           ) : projects.length === 0 ? (
-            <div className="w-full text-center text-xl">
+            <div className="w-full text-center text-xl text-white">
               Hələ heç bir proyekt yoxdur
             </div>
           ) : (
@@ -252,11 +257,15 @@ export const Portfolio = () => {
                     onClick={() => {
                       setEditingProject(project);
                       setNewCaption(project.caption);
-                      setNewLink(projectType === "web" ? project.githubLink : project.graphicLink);
+                      setNewLink(
+                        projectType === "web"
+                          ? project.githubLink
+                          : project.graphicLink
+                      );
                     }}
                     className="absolute z-50 top-2 left-2 text-xl text-white p-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity"
                   >
-                    <MdEdit />
+                    <MdEdit size={25} />
                   </button>
                 )}
                 {/* Hover ile silme butonunu göster */}
@@ -265,7 +274,7 @@ export const Portfolio = () => {
                     onClick={() => handleDeleteProject(project)}
                     className="absolute z-50 top-2 right-2 text-xl text-red-600 p-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity"
                   >
-                    <MdDelete />
+                    <MdDelete size={25} />
                   </button>
                 )}
                 <div className="absolute inset-0 bg-transparent opacity-0 hover:bg-black/50 hover:opacity-100 flex items-center justify-center transition">
@@ -277,7 +286,7 @@ export const Portfolio = () => {
                           : project.graphicLink
                       }
                       target="_blank"
-                      className=" text-white text-2xl font-bold shadow-lg transition-transform duration-300 transform hover:scale-105 underline"
+                      className=" text-white text-xl font-bold shadow-lg transition-transform duration-300 transform hover:scale-105 underline"
                     >
                       {project.caption}
                     </NavLink>
@@ -319,16 +328,15 @@ export const Portfolio = () => {
               </div>
             ))
           )}
-
-         </div>
+        </div>
         {/* Pagination Controls */}
         <div className="flex items-center my-4 space-x-4 text-white">
           <button
             onClick={() => handlePagination("prev")}
             disabled={currentPage === 1}
-            className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 disabled:hidden disabled:cursor-not-allowed"
+            className="disabled:hidden disabled:cursor-not-allowed"
           >
-            Əvvəlki
+            <FaArrowAltCircleLeft size={20} />
           </button>
           <span className="font-medium text-white">
             {currentPage} / {totalPages}
@@ -336,9 +344,9 @@ export const Portfolio = () => {
           <button
             onClick={() => handlePagination("next")}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 disabled:hidden disabled:cursor-not-allowed"
+            className="disabled:hidden disabled:cursor-not-allowed"
           >
-            Növbəti
+            <FaArrowAltCircleRight size={20} />
           </button>
         </div>
       </div>
