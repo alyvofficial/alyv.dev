@@ -13,13 +13,14 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
 import { FaComment } from "react-icons/fa";
+import { useLanguage } from "../providers/LanguageProvider";
 
 // Fetch comments from Firestore
 const fetchComments = async (firestore, articleId) => {
   const docRef = doc(firestore, "articles", articleId);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
-    return docSnap.data().comments || []; // Return comments
+    return docSnap.data().comments || [];
   } else {
     throw new Error("Məqalə tapılmadı!");
   }
@@ -35,13 +36,13 @@ const addComment = async ({
 }) => {
   const articleRef = doc(firestore, "articles", articleId);
   const newComment = {
-    id: Date.now(), // Ensure a unique ID for each comment
+    id: Date.now(),
     userId: userData.uid,
     userName:  [userData.Name, userData.Surname].join(" "),
     userPhoto: userData.photoUrl,
     content: comment,
     date: new Date().toISOString(),
-    parentCommentId, // If it's a reply, include parent comment ID
+    parentCommentId,
   };
 
   // Add the new comment or reply to Firestore
@@ -74,6 +75,7 @@ export const Comments = ({ articleId }) => {
   const [replyToCommentId, setReplyToCommentId] = useState(null); // Track which comment is being replied to
   const [replyContent, setReplyContent] = useState({}); // Track reply content for each parent comment
   const queryClient = useQueryClient();
+  const { translations } = useLanguage();
 
   // Fetch comments from Firestore
   const { data: comments = [] } = useQuery(
@@ -96,7 +98,7 @@ export const Comments = ({ articleId }) => {
       setReplyToCommentId(null); // Reset reply state
     },
     onError: () => {
-      toast.error("Yorum eklenemedi!");
+      toast.error("Yorum əlavə olunmadı!");
     },
   });
 
@@ -172,7 +174,6 @@ export const Comments = ({ articleId }) => {
   };
 
   // Recursive function to render comments and replies
-  // Recursive function to render comments and replies
   const renderComments = (comments, parentId = null) => {
     if (!comments || comments.length === 0) return null;
 
@@ -217,7 +218,7 @@ export const Comments = ({ articleId }) => {
                   onClick={() => handleReplyClick(comment.id)}
                   className="text-blue-600 hover:underline focus:outline-none focus:ring focus:ring-blue-300 transition text-sm"
                 >
-                  Cavabla
+                  {translations.reply}
                 </button>
               )}
 
@@ -229,7 +230,7 @@ export const Comments = ({ articleId }) => {
                     onClick={() => handleDeleteComment(comment)}
                     className="text-red-500 hover:underline transition duration-200 text-sm"
                   >
-                    Sil
+                    {translations.delete}
                   </button>
                 )}
             </div>
@@ -244,7 +245,7 @@ export const Comments = ({ articleId }) => {
               <textarea
                 value={replyContent[comment.id] || ""}
                 onChange={(e) => handleReplyContentChange(e, comment.id)}
-                placeholder="Rəyiniz..."
+                placeholder={translations.yourComment}
                 className="w-full p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring focus:ring-blue-300"
                 rows="1"
                 required
@@ -255,14 +256,14 @@ export const Comments = ({ articleId }) => {
                   type="submit"
                   className="text-sm text-blue-500 py-2 transition duration-200 hover:text-blue-600"
                 >
-                  Rəy bildir
+                  {translations.comment}
                 </button>
                 <button
                   type="button"
                   onClick={() => setReplyToCommentId(null)} // Close the reply form
                   className="text-sm text-red-500 hover:underline transition duration-200"
                 >
-                  İptal
+                  {translations.cancel}
                 </button>
               </div>
             </form>
@@ -289,7 +290,7 @@ export const Comments = ({ articleId }) => {
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Rəyiniz..."
+              placeholder={translations.yourComment}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
               rows="4"
               required
@@ -304,9 +305,9 @@ export const Comments = ({ articleId }) => {
           </form>
         ) : (
           <p className="mt-4 text-gray-700">
-            Rəy bildirmək üçün{" "}
+            {translations.forComment}{" "}
             <NavLink to="/auth/login" className="text-blue-600 hover:underline">
-              giriş edin
+              {translations.plsLogin}
             </NavLink>
             .
           </p>
@@ -317,7 +318,7 @@ export const Comments = ({ articleId }) => {
           {comments.length > 0 ? (
             renderComments(comments)
           ) : (
-            <p className="text-gray-500">Heç bir rəy yoxdur.</p>
+            <p className="text-gray-500">{translations.noComments}</p>
           )}
         </div>
       </div>

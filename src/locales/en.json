@@ -1,0 +1,62 @@
+{
+  "name": "Aliyev Ali",
+  "title": "Graphic / UI Designer & Front-end Web Developer",
+  "viewArticles": "View Articles",
+
+  "articles": "Articles",
+  "portfolio": "Portfolio",
+  "contact": "Contact",
+  "mobile": "Mobile phone",
+  "website": "Website",
+  "nameInput": "Name",
+  "messageInput": "Message",
+  "messagePlaceholder": "Write your message...",
+  "sendButton": "Send",
+  "certificates": "Certificates",
+  "socialMedia": "Social Media",
+  "skills": "Skills",
+  "programming": "Programming",
+  "design": "Design",
+  "other": "Other",
+  "experience": "Experience",
+  "languageSkills": "Language Skills",
+  "az": "Azerbaijani",
+  "en": "English",
+  "ru": "Russian",
+  "aboutMe": "About Me",
+  "aboutText": "Since 2020, I have been working as a freelance graphic and UI designer, and since March 2023, I have been learning front-end web development. I am someone who values working effectively with a team and delivering tasks on time. I don't leave tasks unfinished and always strive to research and learn new things. I enjoy agile work practices and sharing what I learn and know with others.",
+
+  "graphicDesign": "Graphic Design",
+  "sports": "Sports",
+  "education": "Education",
+  "sortNew": "Earliest",
+  "sortOld": "Latest",
+  "sortAll": "All",
+  "articlesLoading": "Articles are loading...",
+  "previos": "Previous",
+  "next": "Next",
+  "searchPlaceholder": "Start searching...",
+  "noArticlesFound": "No articles found",
+
+  "reply": "Reply",
+  "delete": "Delete",
+  "comment": "Comment",
+  "cancel": "Cancel",
+  "forComment": "For to comment",
+  "plsLogin": "log in",
+  "noComments": "No comments",
+  "yourComment": "Your comment",
+
+  "articleNotFound": "Article not found",
+  "backToArticles": "Back",
+
+  "forLogin": "For to sign in",
+
+  "somethingMissing": "Something is missing",
+  "backtoHome": "Sorry, we cannot find that page. You will find lots to explore on the home page.",
+  "backtoHomeButton": "Back to Homepage",
+
+
+  "projectsLoading": "Projects are loading...",
+  "noProjectsFound": "No projects found"
+}

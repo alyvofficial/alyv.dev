@@ -24,6 +24,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { MdDelete, MdEdit, MdCancel } from "react-icons/md";
 import { RxUpdate } from "react-icons/rx";
+import { useLanguage } from "../providers/LanguageProvider";
 
 export const Articles = () => {
   const queryClient = useQueryClient();
@@ -41,6 +42,8 @@ export const Articles = () => {
   const [lastVisible, setLastVisible] = useState(null);
   const [firstVisible, setFirstVisible] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const { translations } = useLanguage();
 
   const config = useMemo(
     () => ({
@@ -50,6 +53,16 @@ export const Articles = () => {
     }),
     []
   );
+
+  useEffect(() => {
+    setCategories([
+      translations.programming,
+      translations.graphicDesign,
+      translations.sports,
+      translations.education,
+      translations.other,
+    ]);
+  }, [translations]);
 
   const fetchArticles = async () => {
     const articlesCollection = collection(firestore, "articles");
@@ -126,13 +139,6 @@ export const Articles = () => {
     }
   };
 
-  const [categories] = useState([
-    "Proqramlaşdırma",
-    "Qrafik dizayn",
-    "İdman",
-    "Təhsil",
-    "Digər",
-  ]);
   const isAdmin = userData && userData.email === "alyvdev@gmail.com";
   const articleContentRef = useRef(null);
 
@@ -235,13 +241,15 @@ export const Articles = () => {
           return b.title.localeCompare(a.title);
         }
       });
+
     const totalArticles = filteredArticles.length;
     const totalPages = Math.ceil(totalArticles / articlesPerPage);
     const currentArticles = filteredArticles.slice(
       (currentPage - 1) * articlesPerPage,
       currentPage * articlesPerPage
     );
-    return { currentArticles, totalPages };
+
+    return { currentArticles, totalPages, totalArticles }; // totalArticles'ı ekleyin
   }, [articles, searchQuery, selectedCategory, sortOrder, currentPage]);
 
   return (
@@ -271,7 +279,7 @@ export const Articles = () => {
             type="search"
             id="default-search"
             className="block w-full p-1 ps-10 text-sm focus:outline-none border border-gray-500 rounded-lg"
-            placeholder="Axtarışa başlayın..."
+            placeholder={translations.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -285,8 +293,8 @@ export const Articles = () => {
             onChange={(e) => setSortOrder(e.target.value)}
             className="p-1 mr-2 border border-gray-300 rounded-lg focus:outline-none"
           >
-            <option value="newest">Yenilər</option>
-            <option value="oldest">Köhnələr</option>
+            <option value="newest">{translations.sortOld}</option>
+            <option value="oldest">{translations.sortNew}</option>
             <option value="A-Z">A-Z</option>
             <option value="Z-A">Z-A</option>
           </select>
@@ -298,7 +306,7 @@ export const Articles = () => {
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="p-1 border border-gray-300 rounded-lg focus:outline-none"
           >
-            <option value="all">Hamısı</option>
+            <option value="all">{translations.sortAll}</option>
             {categories.map((category) => (
               <option key={category} value={category}>
                 {category}
@@ -335,6 +343,7 @@ export const Articles = () => {
                 )}
               </p>
 
+              {/* Edit and Delete Buttons */}
               {userData && (article.userId === userData.uid || isAdmin) && (
                 <div className="w-full flex justify-end gap-2">
                   {editArticleId !== article.id && (
@@ -362,6 +371,7 @@ export const Articles = () => {
                     </>
                   )}
 
+                  {/* Edit Article Section */}
                   {editArticleId === article.id && (
                     <div className="w-full">
                       <input
@@ -377,7 +387,6 @@ export const Articles = () => {
                         onChange={(newContent) => handleEditChange(newContent)}
                         className="w-full"
                       />
-
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -403,33 +412,17 @@ export const Articles = () => {
             </div>
           ))
         ) : (
-          <div className="absolute inset-0 z-50 w-full h-screen flex items-center justify-center">
+          // Display message when no articles are found
+          <div className="w-full flex items-center justify-center">
             <div className="text-center">
-              <svg
-                className="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              <p className="text-lg text-gray-700">Məqalələr yüklənir...</p>
+              <p className="text-lg text-gray-700">
+                {translations.noArticlesFound}
+              </p>
             </div>
           </div>
         )}
       </div>
+
       {/* Pagination Controls */}
       <div className="flex items-center my-4 space-x-4">
         <button
@@ -437,7 +430,7 @@ export const Articles = () => {
           disabled={currentPage === 1}
           className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
         >
-          Əvvəlki
+          {translations.previos}
         </button>
         <span className="font-medium">
           {currentPage} / {totalPages}
@@ -447,7 +440,7 @@ export const Articles = () => {
           disabled={currentPage === totalPages}
           className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
         >
-          Növbəti
+          {translations.next}
         </button>
       </div>
     </section>

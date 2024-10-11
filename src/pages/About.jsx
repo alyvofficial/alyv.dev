@@ -1,36 +1,38 @@
-import { useRef } from 'react';
-import emailjs from '@emailjs/browser';
+import { useRef } from "react";
+import emailjs from "@emailjs/browser";
 import { useAuthContext } from "../providers/AuthProvider";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { FaGithub, FaInstagram, FaLinkedin, FaBehance } from 'react-icons/fa';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { FaGithub, FaInstagram, FaLinkedin, FaBehance } from "react-icons/fa";
+import { useLanguage } from "../providers/LanguageProvider";
 
 export const About = () => {
   const form = useRef();
   const { user } = useAuthContext();
+  const { translations } = useLanguage();
 
   const sendEmail = (e) => {
     e.preventDefault();
 
     if (!user) {
-      toast.error('Mesaj göndərmək üçün giriş etməlisiniz!');
+      toast.error("Mesaj göndərmək üçün giriş etməlisiniz!");
       return; // Prevent form submission
     }
     emailjs
       .sendForm(
-        'service_st1bofo',
-        'template_aratdro',
+        "service_st1bofo",
+        "template_aratdro",
         form.current,
-        '_tk9jHtYR4NQ0iLsB',
+        "_tk9jHtYR4NQ0iLsB"
       )
       .then(
         () => {
           form.current.reset();
-          toast.success('Mesaj uğurla göndərildi!');
+          toast.success("Mesaj uğurla göndərildi!");
         },
         (error) => {
-          console.log('FAILED...', error.text);
-          toast.error('Mesaj göndərilmədi :(');
+          console.log("FAILED...", error.text);
+          toast.error("Mesaj göndərilmədi :(");
         }
       );
   };
@@ -39,10 +41,13 @@ export const About = () => {
       <div className="px-4 py-4">
         <div className="flex flex-col sm:flex-col lg:flex-row gap-8">
           {/* Sol Bölüm */}
-          <div id='contact' className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
-            <h2 className="text-xl font-bold text-[#64ffda] mb-4">ƏLAQƏ</h2>
+          <div
+            id="contact"
+            className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1"
+          >
+            <h2 className="text-xl font-bold text-[#64ffda] mb-4">{translations.contact}</h2>
             <div className="mb-4">
-              <p className="text-white">Mobil nömrə</p>
+              <p className="text-white">{translations.mobile}</p>
               <a
                 href="tel:+994502047722"
                 className="text-gray-400 hover:text-white"
@@ -60,7 +65,7 @@ export const About = () => {
               </a>
             </div>
             <div className="mb-4">
-              <p className="text-white">Vebsayt</p>
+              <p className="text-white">{translations.website}</p>
               <a
                 href="https://alyvofficial.net"
                 className="text-gray-400 hover:text-white"
@@ -75,11 +80,15 @@ export const About = () => {
                 https://alyv.dev
               </a>
             </div>
-             {/* Form */}
-             <form ref={form} onSubmit={sendEmail} className="bg-[#1b1b1b] rounded-md sm:p-4 lg:p-6">
+            {/* Form */}
+            <form
+              ref={form}
+              onSubmit={sendEmail}
+              className="bg-[#1b1b1b] rounded-md sm:p-4 lg:p-6"
+            >
               <div className="mb-4">
                 <label htmlFor="name" className="block text-white mb-2">
-                  Ad
+                  {translations.nameInput}
                 </label>
                 <input
                   type="text"
@@ -99,7 +108,7 @@ export const About = () => {
                   type="email"
                   id="email"
                   name="user_email"
-                  className="w-full p-2 rounded-md bg-[#333] text-white focus:outline-none" 
+                  className="w-full p-2 rounded-md bg-[#333] text-white focus:outline-none"
                   required
                   value={user?.email}
                   readOnly
@@ -107,12 +116,12 @@ export const About = () => {
               </div>
               <div className="mb-4">
                 <label htmlFor="message" className="block text-white mb-2">
-                  Mesaj
+                  {translations.messageInput}
                 </label>
                 <textarea
                   id="message"
                   name="message"
-                  placeholder='Mesajınızı daxil edin...'
+                  placeholder={translations.messagePlaceholder}
                   className="w-full p-2 rounded-md bg-[#333] text-white"
                   rows="4"
                   required
@@ -121,14 +130,14 @@ export const About = () => {
               <input
                 className="bg-[#64ffda] text-black px-4 py-2 rounded-md hover:bg-[#52e0c4] border-none cursor-pointer outline-none"
                 type="submit"
-                value="Göndər"
+                value={translations.sendButton}
               />
             </form>
             <ToastContainer position="top-center" autoClose={2000} />
 
             <div className="mt-8">
               <h2 className="text-xl font-bold text-[#64ffda] mb-4">
-                SERTİFİKATLAR
+                {translations.certificates}
               </h2>
               <div className="mb-2">
                 <p>YUP Technology</p>
@@ -160,20 +169,42 @@ export const About = () => {
                 <p className="text-sm">English B2 level</p>
               </div>
             </div>
-              <div className="mt-8">
-              <h2 className="text-xl font-bold text-[#64ffda] mb-4">SOSİAL ŞƏBƏKƏLƏR</h2>
+            <div className="mt-8">
+              <h2 className="text-xl font-bold text-[#64ffda] mb-4">
+                {translations.socialMedia}
+              </h2>
               <div className="flex space-x-4">
-                <a href="https://github.com/alyvofficial" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#64ffda]">
-                <FaGithub size={20} />
+                <a
+                  href="https://github.com/alyvofficial"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-[#64ffda]"
+                >
+                  <FaGithub size={20} />
                 </a>
-                <a href="https://instagram.com/alyvdev" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#64ffda]">
-                <FaInstagram size={20} />
+                <a
+                  href="https://instagram.com/alyvdev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-[#64ffda]"
+                >
+                  <FaInstagram size={20} />
                 </a>
-                <a href="https://behance.net/alyvdesign" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#64ffda]">
-                <FaBehance size={20} />
+                <a
+                  href="https://behance.net/alyvdesign"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-[#64ffda]"
+                >
+                  <FaBehance size={20} />
                 </a>
-                <a href="https://linkedin.com/in/alyvofficial" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#64ffda]">
-                <FaLinkedin size={20} />
+                <a
+                  href="https://linkedin.com/in/alyvofficial"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-[#64ffda]"
+                >
+                  <FaLinkedin size={20} />
                 </a>
               </div>
             </div>
@@ -182,16 +213,12 @@ export const About = () => {
           {/* Orta Bölüm */}
           <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
             <h2 className="text-xl font-bold text-[#64ffda] mb-4">
-              BACARIQLAR
+              {translations.skills}
             </h2>
             <div>
               <p className="sm:text-base lg:text-lg font-bold text-[#64ffda] mt-6 mb-3">
-                Front-end
+                {translations.programming}
               </p>
-              <div className="mb-2">
-                <p className="text-white">HTML / CSS</p>
-                <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
-              </div>
               <div className="mb-2">
                 <p className="text-white">JavaScript</p>
                 <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
@@ -201,6 +228,14 @@ export const About = () => {
                 <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
+                <p className="text-white">Python</p>
+                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
+              </div>
+              <div className="mb-2">
+                <p className="text-white">Tailwind CSS</p>
+                <div className="h-2 bg-[#969696] w-[85%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
+              </div>
+              <div className="mb-2">
                 <p className="text-white">Bootstrap</p>
                 <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
@@ -208,13 +243,14 @@ export const About = () => {
                 <p className="text-white">jQuery</p>
                 <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
+
               <div className="mb-2">
-                <p className="text-white">Tailwind CSS</p>
-                <div className="h-2 bg-[#969696] w-[85%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
+                <p className="text-white">HTML / CSS</p>
+                <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
             </div>
             <h2 className="sm:text-base lg:text-lg font-bold text-[#64ffda] mt-6 mb-3">
-              Dizayn
+              {translations.design}
             </h2>
             <div className="mb-2">
               <p className="text-white">Adobe Photoshop</p>
@@ -243,15 +279,11 @@ export const About = () => {
 
             <div>
               <p className="sm:text-base lg:text-lg font-bold text-[#64ffda] mt-6 mb-3">
-                Digər
+                {translations.other}
               </p>
               <div className="mb-2">
                 <p className="text-white">Helpdesk</p>
                 <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
-              </div>
-              <div className="mb-2">
-                <p className="text-white">Python</p>
-                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">Pandas</p>
@@ -275,7 +307,7 @@ export const About = () => {
           {/* Sağ Bölüm */}
           <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
             <div>
-              <h2 className="text-xl font-bold text-[#64ffda] mb-3">TƏCRÜBƏ</h2>
+              <h2 className="text-xl font-bold text-[#64ffda] mb-3">{translations.experience}</h2>
               <div className="mb-2">
                 <p>2024</p>
                 <div>
@@ -284,7 +316,7 @@ export const About = () => {
                     Robotex Turkey - Antalya championship
                   </p>
                   <p className="text-sm">
-                    Front-end development və UI dizaynla bağlı lahiyə
+                    Front-end development və UI
                   </p>
                 </div>
               </div>
@@ -292,7 +324,7 @@ export const About = () => {
                 <p>2024</p>
                 <div>
                   <p>Google Developer Group - Build with AI</p>
-                  <p className="text-sm">Gemini API ilə chatbot lahiyəsi</p>
+                  <p className="text-sm">Gemini API</p>
                 </div>
               </div>
               <div className="mb-2">
@@ -300,7 +332,7 @@ export const About = () => {
                 <div>
                   <p>Google Developer Group - Build web with Firebase</p>
                   <p className="text-sm">
-                    Google Firebase ilə vebsayt lahiyəsi
+                    Google Firebase
                   </p>
                 </div>
               </div>
@@ -308,61 +340,47 @@ export const About = () => {
                 <p>2024</p>
                 <div>
                   <p>Viveka Company Creation Program</p>
-                  <p className="text-sm">Viveka startup lahiyəsi</p>
+                  <p className="text-sm">Startup project</p>
                 </div>
               </div>
               <div className="mb-2">
                 <p>2023</p>
                 <div>
                   <p>Mix Point Cafe</p>
-                  <p className="text-sm">Motion dizaynla bağlı 2 lahiyə</p>
+                  <p className="text-sm">Motion design</p>
                 </div>
               </div>
               <div className="mb-2">
                 <p>2023</p>
                 <div>
-                  <p>Digital Cast</p>
-                  <p className="text-sm">
-                    YouTube və Instagram üçün &quot;intro&quot;
-                  </p>
-                </div>
-              </div>
-              <div className="mb-2">
-                <p>2023</p>
-                <div>
-                  <p>Qarabag</p>
-                  <p className="text-sm">Qrafik dizaynla bağlı 3 lahiyə</p>
+                  <p>Qarabug</p>
+                  <p className="text-sm">Graphic design</p>
                 </div>
               </div>
             </div>
             <div className="mt-8">
               <h2 className="text-xl font-bold text-[#64ffda] mb-4">
-                DİL BİLİYİ
+                {translations.languageSkills}
               </h2>
               <div className="mb-2">
-                <p className="text-white">Azərbaycan dili</p>
+                <p className="text-white">{translations.az}</p>
                 <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
-                <p className="text-white">İngilis dili (B2)</p>
+                <p className="text-white">{translations.en} (B2)</p>
                 <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div>
-                <p className="text-white">Rus dili (A1)</p>
+                <p className="text-white">{translations.ru} (A1)</p>
                 <div className="h-2 bg-[#969696] w-[10%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
             </div>
-            <div id='about' className="mt-8">
+            <div id="about" className="mt-8">
               <h2 className="text-xl font-bold text-[#64ffda] mb-4">
-                HAQQIMDA
+                {translations.aboutMe}
               </h2>
               <p>
-                2020-ci ildən frilans olaraq qrafik dizayn və UI dizaynla
-                məşğulam, 2023-cü ilin Martından isə Front-end vebsayt
-                proqramlaşdırmağ; öyrənirəm. Komanda ilə düzgün işləmək, işləri
-                vaxtında çatdırmağa önəm verən biriyəm. Daima araşdırmağa və
-                yenilikləri öyrənməyə çalışıram. Çəvik iş görməyi, ətrafımdakı
-                insanlarla öyrəndiklərim və bildiklərimi paylaşmağı sevirəm.
+                {translations.aboutText}
               </p>
             </div>
           </div>

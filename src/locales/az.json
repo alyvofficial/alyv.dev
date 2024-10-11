@@ -1,0 +1,62 @@
+{
+  "name": "Əliyev Əli",
+  "title": "Qrafik / UI dizayner & Front-end veb developer",
+  "viewArticles": "Məqalələrə bax",
+
+  "articles": "Məqalələr",
+  "portfolio": "Portfel",
+
+  "contact": "Əlaqə",
+  "mobile": "Mobil nömrə",
+  "website": "Vebsayt",
+  "nameInput": "Ad",
+  "messageInput": "Mesaj",
+  "messagePlaceholder": "Mesajınızı daxil edin...",
+  "sendButton": "Göndər",
+  "certificates": "Sertifikatlar",
+  "socialMedia": "Sosial şəbəkələr",
+  "skills": "Bacarıqlar",
+  "programming": "Proqramlaşdırma",
+  "design": "Dizayn",
+  "other": "Digər",
+  "experience": "Təcrübə",
+  "languageSkills": "Dil bacarıqları",
+  "az": "Azərbaycan dili",
+  "en": "İngilis dili",
+  "ru": "Rus dili",
+  "aboutMe": "Haqqımda",
+  "aboutText": "2020-ci ildən frilans olaraq qrafik dizayn və UI dizaynla məşğulam, 2023-cü ilin Martından isə Front-end vebsayt proqramlaşdırmağ; öyrənirəm. Komanda ilə düzgün işləmək, işləri vaxtında çatdırmağa önəm verən biriyəm. Daima araşdırmağa və yenilikləri öyrənməyə çalışıram. Çəvik iş görməyi, ətrafımdakı insanlarla öyrəndiklərim və bildiklərimi paylaşmağı sevirəm.",
+  "graphicDesign": "Qrafik dizayn",
+
+  "sports": "İdman",
+  "education": "Təhsil",
+  "sortNew": "Köhnələr",
+  "sortOld": "Yenilər",
+  "sortAll": "Hamısı",
+  "articlesLoading": "Məqalələr yüklənir...",
+  "previos": "Əvvəlki",
+  "next": "Növbəti",
+  "searchPlaceholder": "Axtarışa başlayın...",
+  "noArticlesFound": "Məqalə tapılmadı",
+
+  "reply": "Cavabla",
+  "delete": "Sil",
+  "comment": "Rəy bildir",
+  "cancel": "İmtina",
+  "forComment": "Rəy bildirmək üçün",
+  "plsLogin": "daxil olun",
+  "noComments": "Heç bir rəy yoxdur",
+  "yourComment": "Rəyiniz...",
+
+  "articleNotFound": "Article not found",
+  "backToArticles": "Back",
+
+  "forLogin": "Daxil olmaq üçün",
+
+  "somethingMissing": "Xəta baş verdi",
+  "backtoHome": "Üzr istəyirik, bu səhifə tapılmadı. Əsas səhifəyə qayıdaraq kəşfə başlayın.",
+  "backtoHomeButton": "Ana səhifə",
+
+  "projectsLoading": "Layihələr yüklənir...",
+  "noProjectsFound": "Layihə tapılmadı"
+}

@@ -9,10 +9,12 @@ import { Portfolio } from "./pages/Portfolio";
 import { ArticlesDetails } from "./pages/ArticlesDetails";
 import { LoginPage } from "./pages/LoginPage";
 import { PageNotFound } from "./pages/PageNotFound";
+import { LanguageProvider } from "./providers/LanguageProvider";
 function App() {
   return (
     <FirebaseProvider>
       <AuthProvider>
+      <LanguageProvider>
         <BrowserRouter>
         <Header/>
           <Routes>
@@ -26,6 +28,7 @@ function App() {
 
           </Routes>
         </BrowserRouter>
+        </LanguageProvider>
       </AuthProvider>
     </FirebaseProvider>
   );

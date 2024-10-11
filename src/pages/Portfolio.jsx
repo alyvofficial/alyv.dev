@@ -20,6 +20,7 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useLanguage } from "../providers/LanguageProvider";
 
 export const Portfolio = () => {
   const { firestore, userData, myStorage } = useAuthContext();
@@ -29,6 +30,7 @@ export const Portfolio = () => {
   const [lastVisible, setLastVisible] = useState(null);
   const [firstVisible, setFirstVisible] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
+  const { translations } = useLanguage();
 
   // Düzenleme için gereken state değişkenleri
   const [editingProject, setEditingProject] = useState(null);
@@ -201,8 +203,8 @@ export const Portfolio = () => {
           onChange={(e) => setProjectType(e.target.value)}
           className="p-2 border bg-black text-white rounded-lg focus:outline-none"
         >
-          <option value="web">Vebsayt</option>
-          <option value="graphic">Qrafik dizayn</option>
+          <option value="web">{translations.website}</option>
+          <option value="graphic">{translations.graphicDesign}</option>
         </select>
       </label>
 
@@ -295,32 +297,31 @@ export const Portfolio = () => {
                 {editingProject && editingProject.id === project.id && (
                   <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
                     <div className="p-4 rounded-lg bg-white">
-                      <h3 className="text-xl font-bold">Düzenle</h3>
                       <input
                         type="text"
                         value={newCaption}
                         onChange={(e) => setNewCaption(e.target.value)}
-                        placeholder="Yeni Başlık"
+                        placeholder="Başlıq"
                         className="p-2 border rounded mb-2 w-full"
                       />
                       <input
                         type="text"
                         value={newLink}
                         onChange={(e) => setNewLink(e.target.value)}
-                        placeholder="Yeni Link"
+                        placeholder="Link"
                         className="p-2 border rounded mb-2 w-full"
                       />
                       <button
                         onClick={() => handleUpdateProject(project)}
                         className="px-4 py-2 bg-blue-500 text-white rounded"
                       >
-                        Güncelle
+                        Güncəllə
                       </button>
                       <button
                         onClick={() => setEditingProject(null)}
                         className="ml-2 px-4 py-2 bg-gray-300 rounded"
                       >
-                        İptal
+                        İmtina
                       </button>
                     </div>
                   </div>

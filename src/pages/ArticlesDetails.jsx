@@ -14,6 +14,7 @@ import { IoShareOutline, IoArrowBack } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { Comments } from "./Comments";
+import { useLanguage } from "../providers/LanguageProvider";
 
 // Firestore'dan makale verisini çekmek için fonksiyon
 const fetchArticle = async (firestore, id) => {
@@ -44,6 +45,7 @@ export const ArticlesDetails = () => {
   const { id } = useParams();
   const { userData, firestore } = useAuthContext();
   const queryClient = useQueryClient();
+  const { translations } = useLanguage();
 
   // Firestore'dan makaleyi çek
   const { data: article, isLoading } = useQuery(
@@ -142,7 +144,7 @@ export const ArticlesDetails = () => {
               to="/articles"
               className="flex items-center transition-colors hover:text-blue-500"
             >
-              <IoArrowBack className="w-6 h-6 mr-2" /> Geri
+              <IoArrowBack className="w-6 h-6 mr-2" /> {translations.backToArticles}
             </NavLink>
             <button
               onClick={handleShare}
@@ -190,7 +192,7 @@ export const ArticlesDetails = () => {
       ) : (
         <div className="text-center py-12">
           <h2 className="text-2xl font-semibold text-gray-600">
-            Məqalə tapılmadı!
+            {translations.articleNotFound}
           </h2>
         </div>
       )}

@@ -4,10 +4,14 @@ import { MdLogout } from "react-icons/md";
 import { useAuthContext } from "../../providers/AuthProvider";
 import { FaUserCircle } from "react-icons/fa";
 import { FaCirclePlus } from "react-icons/fa6";
+import { Changer } from "../../pages/Changer";
+import { useLanguage } from "../../providers/LanguageProvider";
 
 export const Header = () => {
   const { userData, logout } = useAuthContext();
-  const menuRef = useRef(null); // Ref for the menu container
+  const menuRef = useRef(null);
+  const { translations } = useLanguage();
+
 
   return (
     <header className="w-full flex flex-col items-center justify-between bg-black">
@@ -65,7 +69,7 @@ export const Header = () => {
           )}
         </div>
       </div>
-      <div className="w-full px-5 mb-3">
+      <div className="w-full px-5 mb-3 flex items-center justify-between">
         <ul className="w-full flex flex-wrap items-center gap-3 list-none m-0 text-sm">
           {!userData ? (
             <>
@@ -73,13 +77,13 @@ export const Header = () => {
                 to="/articles"
                 className="text-gray-500 hover:text-white"
               >
-                <li className="list-none">Məqalələr</li>
+                <li className="list-none">{translations.articles}</li>
               </NavLink>
               <NavLink
                 to="/portfolio"
                 className="text-gray-500 hover:text-white"
               >
-                <li className="list-none">Portfolio</li>
+                <li className="list-none">{translations.portfolio}</li>
               </NavLink>
             </>
           ) : (
@@ -109,6 +113,7 @@ export const Header = () => {
             </>
           )}
         </ul>
+        <Changer />
       </div>
     </header>
   );

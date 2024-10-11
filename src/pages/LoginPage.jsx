@@ -1,9 +1,11 @@
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { useAuthContext } from "../providers/AuthProvider";
 import { Navigate } from "react-router-dom";
+import { useLanguage } from "../providers/LanguageProvider";
 
 export const LoginPage = () => {
     const { googleSignIn, githubSignIn, userData } = useAuthContext();
+    const { translations } = useLanguage();
     
 if (userData) {
     return <Navigate to="/" />;
@@ -14,7 +16,7 @@ if (userData) {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="mt-6 flex items-center justify-between">
           <span className="border-b sm:w-1/5 lg:w-1/4"></span>
-          <span className="text-xs text-center text-gray-500 uppercase">Giriş etmək üçün</span>
+          <span className="text-xs text-center text-gray-500 uppercase">{translations.forLogin}</span>
           <span className="border-b sm:w-1/5 lg:w-1/4"></span>
         </div>
         <div className="mt-6 flex justify-center gap-4 flex-col">
