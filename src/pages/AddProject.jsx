@@ -99,13 +99,13 @@ export const AddProject = () => {
   };
 
   return (
-    <section className="w-full mx-auto mt-4 bg-white rounded-lg">
+    <section className="w-full mx-auto mt-4 rounded-lg bg-[#232323] text-white p-5">
       <ToastContainer position="top-center" autoClose={2000} />
-      <label className="block mb-4">
+      <label className="block mb-4 ">
         <select
           value={projectType}
           onChange={(e) => setProjectType(e.target.value)}
-          className="p-1 mr-2 border border-gray-300 rounded-lg focus:outline-none"
+          className="p-1 mr-2 border rounded-lg focus:outline-none bg-[#232323] text-white"
         >
           <option value="web">Website</option>
           <option value="graphic">Qrafik dizayn</option>
@@ -119,37 +119,37 @@ export const AddProject = () => {
               type="file"
               accept="image/*"
               onChange={(e) => setImageFile(e.target.files[0])}
-              className="mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+              className="mt-1 text-sm  text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
             />
           </label>
           <label className="flex flex-col mb-4">
-            <span className="text-gray-700">Başlıq:</span>
+            <span className="text-white">Başlıq:</span>
             <input
               type="text"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
-              className="sm:w-full lg:w-1/3 p-2 border border-gray-300 rounded"
+              className="sm:w-full lg:w-1/3 p-2 border bg-[#232323] text-white rounded"
             />
           </label>
           {projectType === "web" && (
             <label className="flex flex-col mb-4">
-              <span className="text-gray-700">GitHub Link:</span>
+              <span className="text-white">GitHub Link:</span>
               <input
                 type="url"
                 value={githubLink}
                 onChange={(e) => setGithubLink(e.target.value)}
-                className="sm:w-full lg:w-1/3  p-2 border border-gray-300 rounded"
+                className="sm:w-full lg:w-1/3  p-2 border bg-[#232323] text-white rounded"
               />
             </label>
           )}
           {projectType === "graphic" && (
             <label className="flex flex-col mb-4">
-              <span className="text-gray-700">Link:</span>
+              <span className="text-white">Link:</span>
               <input
                 type="url"
                 value={graphicLink}
                 onChange={(e) => setGraphicLink(e.target.value)}
-                className="sm:w-full lg:w-1/3 p-2 border border-gray-300 rounded"
+                className="sm:w-full lg:w-1/3 p-2 border bg-[#232323] text-white rounded"
               />
             </label>
           )}

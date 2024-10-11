@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaGithub, FaInstagram, FaLinkedin, FaBehance } from "react-icons/fa";
 import { useLanguage } from "../providers/LanguageProvider";
+import { motion } from "framer-motion";
 
 export const About = () => {
   const form = useRef();
@@ -40,6 +41,13 @@ export const About = () => {
     <section className="w-full bg-black text-white">
       <div className="px-4 py-4">
         <div className="flex flex-col sm:flex-col lg:flex-row gap-8">
+        <motion.div
+          className="flex flex-col sm:flex-col lg:flex-row gap-8"
+          initial={{ opacity: 0, y: 50 }} // İlk yüklemede görünmez ve aşağıda başlar
+          whileInView={{ opacity: 1, y: 0 }} // Göründüğünde şeffaflık ve y pozisyonu değişir
+          transition={{ duration: 0.6 }} // Animasyonun süresi
+          viewport={{ once: true }} // Her bileşen sadece bir kez animasyon yapacak
+        >
           {/* Sol Bölüm */}
           <div
             id="contact"
@@ -209,6 +217,14 @@ export const About = () => {
               </div>
             </div>
           </div>
+          </motion.div>
+          <motion.div
+            className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1"
+            initial={{ opacity: 0, x: -50 }} // Sağdan soldan kayma animasyonları için x değerini değiştir
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
 
           {/* Orta Bölüm */}
           <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
@@ -225,7 +241,7 @@ export const About = () => {
               </div>
               <div className="mb-2">
                 <p className="text-white">React JS</p>
-                <div className="h-2 bg-[#969696] w-1/2 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
+                <div className="h-2 bg-[#969696] w-[70%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
               <div className="mb-2">
                 <p className="text-white">Python</p>
@@ -303,7 +319,14 @@ export const About = () => {
               </div>
             </div>
           </div>
-
+          </motion.div>
+          <motion.div
+            className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1"
+            initial={{ opacity: 0, y: 50 }} // Bu sefer yukarıdan aşağı kayar
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
           {/* Sağ Bölüm */}
           <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
             <div>
@@ -384,6 +407,7 @@ export const About = () => {
               </p>
             </div>
           </div>
+          </motion.div>
         </div>
       </div>
     </section>

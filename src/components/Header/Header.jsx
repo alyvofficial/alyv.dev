@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
 import { useAuthContext } from "../../providers/AuthProvider";
 import { FaUserCircle } from "react-icons/fa";
@@ -16,7 +16,7 @@ export const Header = () => {
   return (
     <header className="w-full flex flex-col items-center justify-between bg-black">
       <div className="flex items-center justify-between w-full px-5 py-2">
-        <NavLink className="w-12" to={"/"}>
+        <Link className="w-12" to={"/"}>
           <svg
             id="Layer_1"
             data-name="Layer 1"
@@ -42,7 +42,7 @@ export const Header = () => {
               d="M842.6,509.84c5.92-4.94,5.78-13.99-.23-18.83-11.91-9.6-20.51-19.98-25.81-31.13-7.05-14.8-10.57-35.86-10.57-63.18v-98.33c0-20.41-3.96-33.21-11.86-38.38-7.91-5.18-26.96-7.76-57.15-7.76h0c-6.84.24-12.51-5.24-12.51-12.08v-82.09c0-6.57,5.26-11.9,11.82-12.08,5.36-.14,10.62-.38,15.78-.71l49.46-2.56c.38-.02.76-.02,1.13,0l30.05,1.27c73.89,0,110.84,39.4,110.84,118.17v116.01c0,22.14,3.38,38.53,10.14,49.17,5.49,8.65,14.16,14.82,26,18.53,5.13,1.6,8.71,6.23,8.71,11.61v94.16c0,5.38-3.58,10.03-8.72,11.61-19.8,6.08-30.84,17.71-33.12,34.89l-2.16,18.98c-.58,3.45-.86,5.46-.86,6.04v115.15c0,44.56-9.85,75.54-29.54,92.94-19.7,17.4-54.71,26.1-105.02,26.1l-24.58-.43-32.35-1.29-15.89-.5c-6.53-.2-11.71-5.55-11.71-12.08v-85.03c0-6.78,5.58-12.24,12.37-12.09l6.61.15c26.45,0,43.48-2.88,51.1-8.63,7.62-5.75,11.43-18.26,11.43-37.52v-95.31c0-28.18,3.23-49.09,9.71-62.75,4.99-10.53,13.95-21.2,26.9-31.99Z"
             />
           </svg>
-        </NavLink>
+        </Link>
         <div ref={menuRef} className="">
           {" "}
           {!userData ? (
@@ -85,6 +85,12 @@ export const Header = () => {
               >
                 <li className="list-none">{translations.portfolio}</li>
               </NavLink>
+              <NavLink
+                to="/shop"
+                className="text-gray-500 hover:text-white"
+              >
+                <li className="list-none">{translations.shop}</li>
+              </NavLink>
             </>
           ) : (
             <>
@@ -92,13 +98,19 @@ export const Header = () => {
                 to="/articles"
                 className="text-gray-500 hover:text-white"
               >
-                <li className="list-none">Məqalələr</li>
+                <li className="list-none">{translations.articles}</li>
               </NavLink>
               <NavLink
                 to="/portfolio"
                 className="text-gray-500 hover:text-white"
               >
-                <li className="list-none">Portfolio</li>
+                <li className="list-none">{translations.portfolio}</li>
+              </NavLink>
+              <NavLink
+                to="/shop"
+                className="text-gray-500 hover:text-white"
+              >
+                <li className="list-none">{translations.shop}</li>
               </NavLink>
               {userData && userData.email === "alyvdev@gmail.com" && (
                 <>

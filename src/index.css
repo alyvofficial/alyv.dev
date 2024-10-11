@@ -50,6 +50,11 @@ tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
+.active {
+ color: #52e0c4;
+}
+
+
 @media (max-width: 768px) {
   ul {
     margin-left: 25px;

@@ -5,8 +5,11 @@
 
   "articles": "Articles",
   "portfolio": "Portfolio",
+  "shop": "Shop",
+
+
   "contact": "Contact",
-  "mobile": "Mobile phone",
+  "mobile": "Phone number",
   "website": "Website",
   "nameInput": "Name",
   "messageInput": "Message",

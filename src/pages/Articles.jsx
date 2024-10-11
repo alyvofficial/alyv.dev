@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { MdDelete, MdEdit, MdCancel } from "react-icons/md";
 import { RxUpdate } from "react-icons/rx";
 import { useLanguage } from "../providers/LanguageProvider";
+import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
 
 export const Articles = () => {
   const queryClient = useQueryClient();
@@ -50,6 +51,7 @@ export const Articles = () => {
       readonly: false,
       height: "500px",
       uploader: { insertImageAsBase64URI: true },
+      theme: "dark",
     }),
     []
   );
@@ -253,7 +255,7 @@ export const Articles = () => {
   }, [articles, searchQuery, selectedCategory, sortOrder, currentPage]);
 
   return (
-    <section className="p-5 flex flex-col overflow-y-auto w-full relative">
+    <section className="p-5 flex flex-col overflow-y-auto w-full relative bg-black min-h-screen">
       <ToastContainer position="top-center" autoClose={2000} />
 
       <div className="flex sm:flex-col lg:flex-row-reverse sm:items-start lg:items-center lg:justify-between gap-3 mb-4">
@@ -278,7 +280,7 @@ export const Articles = () => {
           <input
             type="search"
             id="default-search"
-            className="block w-full p-1 ps-10 text-sm focus:outline-none border border-gray-500 rounded-lg"
+            className="block w-full p-1 ps-10 text-sm focus:outline-none border bg-[#232323] text-white rounded-lg"
             placeholder={translations.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -291,7 +293,7 @@ export const Articles = () => {
             id="sortOrder"
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            className="p-1 mr-2 border border-gray-300 rounded-lg focus:outline-none"
+            className="p-1 mr-2 border bg-[#232323] text-white rounded-lg focus:outline-none"
           >
             <option value="newest">{translations.sortOld}</option>
             <option value="oldest">{translations.sortNew}</option>
@@ -304,7 +306,7 @@ export const Articles = () => {
             id="category"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="p-1 border border-gray-300 rounded-lg focus:outline-none"
+            className="p-1 border bg-[#232323] text-white rounded-lg focus:outline-none"
           >
             <option value="all">{translations.sortAll}</option>
             {categories.map((category) => (
@@ -326,20 +328,22 @@ export const Articles = () => {
                   navigate(`/articles/${article.id}`);
                 }
               }}
-              className={`p-2 border-2 border-gray-950 bg-amber-50 shadow-lg rounded-xl relative sm:w-full lg:${
+              className={`p-2 bg-[#232323] shadow-lg rounded-xl relative sm:w-full lg:w-[49%] lg:${
                 editArticleId === article.id ? "w-full" : "w-[49%]"
               } cursor-pointer ${
-                editArticleId === article.id ? "bg-gray-100" : ""
+                editArticleId === article.id ? "bg-[#232323]" : ""
               }`}
             >
-              <h3 className="text-lg sm:mr-5 lg:mr-0 font-semibold text-black">
+              <h3 className="text-lg sm:mr-5 lg:mr-0 font-semibold text-white">
                 {article.title}
               </h3>
-              <span className="text-sm text-blue-900">{article.category}</span>
+              <span className="text-sm text-[#64ffda] mb-2">
+                {article.category}
+              </span>
               <p className="text-xs text-gray-500 mb-1">
                 {format(
                   new Date(article.createdAt.seconds * 1000),
-                  "dd/MM/yyyy HH:mm"
+                  "dd/MM/yyyy"
                 )}
               </p>
 
@@ -355,18 +359,18 @@ export const Articles = () => {
                           setEditTitle(article.title);
                           setEditContent(article.content);
                         }}
-                        className="px-3 py-1 bg-blue-500 text-white text-sm rounded"
+                        className="text-white "
                       >
-                        <MdEdit />
+                        <MdEdit size={20}/>
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteArticle(article.id);
                         }}
-                        className="px-3 py-1 bg-red-500 text-white text-sm rounded"
+                        className="text-red-500"
                       >
-                        <MdDelete />
+                        <MdDelete size={20}/>
                       </button>
                     </>
                   )}
@@ -378,7 +382,7 @@ export const Articles = () => {
                         type="text"
                         value={editTitle}
                         onChange={(e) => handleEditChange(e, "title")}
-                        className="block w-full my-2 p-2 border border-gray-300 rounded"
+                        className="block w-full my-2 p-2 border bg-[#232323] text-white rounded"
                       />
                       <JoditEditor
                         ref={editorRef}
@@ -424,23 +428,23 @@ export const Articles = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center my-4 space-x-4">
+      <div className="flex items-center my-4">
         <button
           onClick={() => handlePagination("prev")}
           disabled={currentPage === 1}
-          className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="disabled:hidden disabled:cursor-not-allowed text-white mr-3"
         >
-          {translations.previos}
+          <FaArrowAltCircleLeft size={20} />
         </button>
-        <span className="font-medium">
+        <span className="font-medium text-white">
           {currentPage} / {totalPages}
         </span>
         <button
           onClick={() => handlePagination("next")}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="disabled:hidden disabled:cursor-not-allowed ml-3"
         >
-          {translations.next}
+          <FaArrowAltCircleRight size={20} />
         </button>
       </div>
     </section>

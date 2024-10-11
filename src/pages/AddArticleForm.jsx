@@ -26,9 +26,14 @@ export const AddArticleForm = () => {
 
   const config = useMemo(() => {
     return {
-      readonly: false,
-      height: "500px",
-      uploader: { insertImageAsBase64URI: true },
+      autofocus: true,
+      uploader: {
+        insertImageAsBase64URI: true,
+      },
+      enter: "BR",
+      saveHeightInStorage: true,
+      saveModeInStorage: true,
+      height: 500,
     };
   }, []);
 
@@ -71,21 +76,21 @@ export const AddArticleForm = () => {
   };
 
   return (
-    <section className="p-5 min-h-screen overflow-y-auto">
+    <section className="p-5 min-h-screen overflow-y-auto bg-black">
       <ToastContainer position="top-center" autoClose={2000} />
 
       {isAdmin ? (
         <div className="h-full mb-3">
           <form
             onSubmit={addArticle}
-            className="space-y-4 h-full max-w-full border-black"
+            className="space-y-4 h-full max-w-full bg-[#232323] text-white p-5 rounded-lg"
           >
             <div>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-2 border border-gray-300 rounded bg-[#232323] text-white"
                 placeholder="Başlıq"
               />
             </div>
@@ -106,7 +111,7 @@ export const AddArticleForm = () => {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-2 border border-gray-300 rounded bg-[#232323] text-white"
               >
                 <option value="">Kateqoriya seçin</option>
                 {categories.map((cat, idx) => (

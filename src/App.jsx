@@ -10,6 +10,7 @@ import { ArticlesDetails } from "./pages/ArticlesDetails";
 import { LoginPage } from "./pages/LoginPage";
 import { PageNotFound } from "./pages/PageNotFound";
 import { LanguageProvider } from "./providers/LanguageProvider";
+import { Shop } from "./pages/Shop";
 function App() {
   return (
     <FirebaseProvider>
@@ -24,6 +25,7 @@ function App() {
             <Route path="/add-article" element={<AddArticleForm />} /> 
             <Route path="/portfolio" element={<Portfolio />} /> 
             <Route path="/auth/login" element={<LoginPage />} /> 
+            <Route path="/shop" element={<Shop />} /> 
             <Route path="*" element={<PageNotFound />} /> 
 
           </Routes>
