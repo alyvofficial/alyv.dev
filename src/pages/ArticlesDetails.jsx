@@ -11,7 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { IoShareOutline, IoArrowBack } from "react-icons/io5";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { Comments } from "./Comments";
 import { useLanguage } from "../providers/LanguageProvider";
@@ -135,46 +135,46 @@ export const ArticlesDetails = () => {
   }
 
   return (
-    <section className="bg-white shadow-md rounded-lg overflow-hidden mx-auto max-w-6xl">
+    <section className=" shadow-md rounded-lg overflow-hidden mx-auto">
       <ToastContainer position="top-center" autoClose={2000} />
       {article ? (
         <div className="p-6">
           <div className="flex items-center justify-between text-gray-600 mb-4">
-            <NavLink
+            <Link
               to="/articles"
-              className="flex items-center transition-colors hover:text-blue-500"
+              className="flex items-center transition-colors hover:text-gray-400"
             >
               <IoArrowBack className="w-6 h-6 mr-2" /> {translations.backToArticles}
-            </NavLink>
+            </Link>
             <button
               onClick={handleShare}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className=""
             >
-              <IoShareOutline className="w-6 h-6 text-gray-600" />
+              <IoShareOutline className="w-6 h-6 text-gray-600 hover:text-gray-400 transition-colors" />
             </button>
           </div>
           <div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            <h2 className="text-3xl font-bold text-white mb-2">
               {article.title}
             </h2>
-            <p className="text-sm text-gray-500 mb-4">{article.category}</p>
+            <p className="text-sm text-[#64ffda] mb-4">{article.category}</p>
             <div
               className="prose lg:prose-xl max-w-none" // Prose for better typography
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
 
             <div className="flex items-center justify-between mt-6 border-t pt-4">
-              <div className="flex items-center gap-4 text-gray-600">
+              <div className="flex items-center gap-4 text-gray-500">
                 {userData ? (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleLike();
                     }}
-                    className="flex items-center gap-1 hover:text-blue-500 transition-colors"
+                    className="flex items-center gap-1 hover:text-white transition-colors"
                   >
                     {article.likes.includes(userData.uid) ? (
-                      <BiSolidLike className="text-blue-500 w-6 h-6" />
+                      <BiSolidLike className="text-white w-6 h-6" />
                     ) : (
                       <BiLike className="w-6 h-6" />
                     )}

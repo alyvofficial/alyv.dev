@@ -110,6 +110,7 @@ export const Portfolio = () => {
       refetchOnWindowFocus: false, // Pencere odağa geldiğinde yeniden istek yapma
       refetchOnReconnect: false, // Bağlantı yeniden kurulduğunda istek yapma
       cacheTime: Infinity, // Veriyi süresiz olarak önbellekte tut
+      keepPreviousData: true, // Yeni veri gelene kadar önceki veriyi göster
     }
   );
   
@@ -335,7 +336,7 @@ export const Portfolio = () => {
           <button
             onClick={() => handlePagination("prev")}
             disabled={currentPage === 1}
-            className="disabled:hidden disabled:cursor-not-allowed"
+            className="disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FaArrowAltCircleLeft size={20} />
           </button>
@@ -345,7 +346,7 @@ export const Portfolio = () => {
           <button
             onClick={() => handlePagination("next")}
             disabled={currentPage === totalPages}
-            className="disabled:hidden disabled:cursor-not-allowed"
+            className="disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FaArrowAltCircleRight size={20} />
           </button>

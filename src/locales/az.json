@@ -59,5 +59,14 @@
   "backtoHomeButton": "Ana səhifə",
 
   "projectsLoading": "Layihələr yüklənir...",
-  "noProjectsFound": "Layihə tapılmadı"
+  "noProjectsFound": "Layihə tapılmadı",
+
+
+  "checkoutWithWhatsApp": "WhatsApp ilə ödəniş",
+  "loadingProducts": "Məhsullar yüklənir...",
+  "addToCart": "Səbətə əlavə et",
+  "yourCart": "Səbətiniz",
+  "NoProductsInCart": "Səbətdə məhsul yoxdur",
+  "remove": "Sil",
+  "close": "Bağla"
 }

@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import emailjs from "@emailjs/browser";
-import { useAuthContext } from "../providers/AuthProvider";
+import { useAuthContext } from "../../providers/AuthProvider";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaGithub, FaInstagram, FaLinkedin, FaBehance } from "react-icons/fa";
-import { useLanguage } from "../providers/LanguageProvider";
+import { useLanguage } from "../../providers/LanguageProvider";
 import { motion } from "framer-motion";
 
 export const About = () => {

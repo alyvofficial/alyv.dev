@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuthContext } from "../providers/AuthProvider";
+import { useAuthContext } from "../../providers/AuthProvider";
 import imageCompression from "browser-image-compression";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -99,7 +99,7 @@ export const AddProject = () => {
   };
 
   return (
-    <section className="w-full mx-auto mt-4 rounded-lg bg-[#232323] text-white p-5">
+    <section className="w-full mx-auto my-4 rounded-lg bg-[#232323] text-white p-5">
       <ToastContainer position="top-center" autoClose={2000} />
       <label className="block mb-4 ">
         <select

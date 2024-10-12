@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FirebaseProvider } from "./providers/FirebaseProvider";
 import { AuthProvider } from "./providers/AuthProvider";
-import { Home } from "./pages/Home";
+import { Home } from "./pages/home/Home";
 import { Header } from "./components/Header/Header";
 import { Articles } from "./pages/Articles";
-import { AddArticleForm } from "./pages/AddArticleForm";
+import { AddArticleForm } from "./pages/admin/AddArticleForm";
 import { Portfolio } from "./pages/Portfolio";
 import { ArticlesDetails } from "./pages/ArticlesDetails";
 import { LoginPage } from "./pages/LoginPage";

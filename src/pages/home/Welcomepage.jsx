@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import welcomeImg from "../assets/Images/ALYV.webp";
-import { useLanguage } from "../providers/LanguageProvider";
+import welcomeImg from "../../assets/Images/ALYV.webp";
+import { useLanguage } from "../../providers/LanguageProvider";
 import { motion } from "framer-motion";
 
 export const Welcomepage = () => {

@@ -61,5 +61,14 @@
 
 
   "projectsLoading": "Projects are loading...",
-  "noProjectsFound": "No projects found"
+  "noProjectsFound": "No projects found",
+
+
+  "checkoutWithWhatsApp": "Checkout with WhatsApp",
+  "loadingProducts": "Products are loading...",
+  "addToCart": "Add to Cart",
+  "yourCart": "Your Cart",
+  "NoProductsInCart": "No products in cart",
+  "remove": "Remove",
+  "close": "Close"
 }

@@ -1,5 +1,5 @@
 import { About } from "./About";
-import { Footer } from "../components/Footer/Footer";
+import { Footer } from "../../components/Footer/Footer";
 import { Welcomepage } from "./Welcomepage";
 
 export const Home = () => {

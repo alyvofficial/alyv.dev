@@ -182,8 +182,8 @@ export const Comments = ({ articleId }) => {
       .map((comment) => (
         <div
           key={comment.id}
-          className={`mb-4 p-2 border rounded-lg shadow transition duration-200 ${
-            parentId ? "bg-gray-50" : "bg-white"
+          className={`mb-4 p-2 rounded-lg shadow transition duration-200 ${
+            parentId ? "bg-[#232323]" : "bg-[#383838]"
           } hover:shadow-lg`}
         >
           {/* Comment UI */}
@@ -191,7 +191,7 @@ export const Comments = ({ articleId }) => {
             <img
               src={comment.userPhoto || "https://via.placeholder.com/50"}
               alt={comment.userName}
-              className="w-12 h-12 rounded-full mr-4 border-2"
+              className="w-10 h-10 rounded-full mr-4 border-2"
             />
             <div>
               <p className="font-semibold text-lg">{comment.userName}</p>
@@ -200,10 +200,10 @@ export const Comments = ({ articleId }) => {
               </p>
             </div>
           </div>
-          <div className="bg-gray-100 p-2 rounded-md mb-3 text-gray-800 shadow-inner flex flex-col items-start gap-2">
+          <div className="bg-[#232323] p-2 rounded-md mb-3 text-white shadow-inner flex flex-col items-start gap-2">
             {comment.content}
             {parentId && ( // Show reply context only if it's a reply
-              <span className="text-xs font-bold text-gray-500 mt-2">
+              <span className="text-xs font-bold text-gray-200 mt-2">
                 {/* Add the replying user's name here */}
                 @{
                   comments.find((c) => c.id === comment.parentCommentId)
@@ -211,12 +211,12 @@ export const Comments = ({ articleId }) => {
                 }
               </span>
             )}
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               {/* Reply button */}
               {userData && (
                 <button
                   onClick={() => handleReplyClick(comment.id)}
-                  className="text-blue-600 hover:underline focus:outline-none focus:ring focus:ring-blue-300 transition text-sm"
+                  className="p-2 rounded-lg bg-[#383838] text-blue-400 hover:bg-blue-400 hover:text-[#383838]  focus:outline-none focus:ring focus:ring-blue-300 transition text-sm"
                 >
                   {translations.reply}
                 </button>
@@ -228,7 +228,7 @@ export const Comments = ({ articleId }) => {
                   userData.uid === comment.userId) && (
                   <button
                     onClick={() => handleDeleteComment(comment)}
-                    className="text-red-500 hover:underline transition duration-200 text-sm"
+                    className="p-2 rounded-lg bg-[#383838] text-red-500 hover:bg-red-500 hover:text-[#383838] transition duration-200 text-sm"
                   >
                     {translations.delete}
                   </button>
@@ -240,13 +240,13 @@ export const Comments = ({ articleId }) => {
           {replyToCommentId === comment.id && (
             <form
               onSubmit={(e) => handleReplySubmit(e, comment.id)}
-              className="mt-3 bg-gray-200 p-2 rounded-md"
+              className="mt-3 bg-[#232323] p-2 rounded-md"
             >
               <textarea
                 value={replyContent[comment.id] || ""}
                 onChange={(e) => handleReplyContentChange(e, comment.id)}
                 placeholder={translations.yourComment}
-                className="w-full p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full p-2 rounded-md shadow focus:outline-none bg-[#383838]"
                 rows="1"
                 required
                 maxLength="200"
@@ -282,25 +282,25 @@ export const Comments = ({ articleId }) => {
   };
 
   return (
-    <div>
+    <section>
       <ToastContainer position="top-center" autoClose={2000} />
-      <div className="p-2 bg-gray-50 rounded-lg shadow-md" id="comments">
+      <div className="p-2 rounded-lg shadow-md bg-[#232323]">
         {userData ? (
           <form onSubmit={handleCommentSubmit} className="mt-4">
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder={translations.yourComment}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-              rows="4"
+              className="w-full p-3 focus:border-gray-300 bg-[#383838] rounded-lg"
+              rows="2"
               required
               maxLength="500"
             />
             <button
               type="submit"
-              className="my-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+              className="my-4 text-white flex items-center gap-2 bg-[#383838] hover:text-[#383838] hover:bg-white p-2 rounded-lg"
             >
-              <FaComment />
+              <FaComment /> {translations.comment}
             </button>
           </form>
         ) : (
@@ -322,6 +322,6 @@ export const Comments = ({ articleId }) => {
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };

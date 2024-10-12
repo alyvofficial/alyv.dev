@@ -1,11 +1,12 @@
 import { useState, useRef, useMemo } from "react";
-import { useAuthContext } from "../providers/AuthProvider";
+import { useAuthContext } from "../../providers/AuthProvider";
 import { collection, addDoc } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "jodit";
 import JoditEditor from "jodit-react";
 import { AddProject } from "./AddProject";
+import { AddProducts } from "./AddProducts";
 
 export const AddArticleForm = () => {
   const { userData, firestore } = useAuthContext();
@@ -95,7 +96,7 @@ export const AddArticleForm = () => {
               />
             </div>
 
-            <div>
+            <div className="text-black">
               <JoditEditor
                 ref={editorRef}
                 value={content}
@@ -135,6 +136,8 @@ export const AddArticleForm = () => {
       )}
       <hr />
       <AddProject />
+      <hr />
+      <AddProducts />
     </section>
   );
 };
