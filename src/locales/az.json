@@ -6,6 +6,8 @@
   "articles": "Məqalələr",
   "portfolio": "Portfel",
   "shop": "Mağaza",
+  "login": "Daxil ol",
+  "vacancies": "Vakansiyalar",
 
   "contact": "Əlaqə",
   "mobile": "Mobil nömrə",
@@ -68,5 +70,6 @@
   "yourCart": "Səbətiniz",
   "NoProductsInCart": "Səbətdə məhsul yoxdur",
   "remove": "Sil",
-  "close": "Bağla"
+  "close": "Bağla",
+  "NoProductsAvailable": "Məhsul mövcud deyil"
 }

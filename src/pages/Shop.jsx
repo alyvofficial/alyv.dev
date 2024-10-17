@@ -288,14 +288,14 @@ export const Shop = () => {
       <div className="flex flex-wrap items-center gap-6">
         {isLoading ? (
           <p className="text-white">{translations.loadingProducts}</p>
+        ) : products && products.length === 0 ? (
+          <p className="text-gray-400">{translations.NoProductsAvailable}</p>
         ) : (
-          products &&
           products.map((product) => (
             <div
               key={product.id}
               className="p-4 rounded-lg bg-[#232323] md:w-[48%] lg:w-[32%] bg-cover bg-center relative"
             >
-              
               {editingProduct && editingProduct.id === product.id && (
                 <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
                   <div className="p-4 rounded-lg bg-[#232323]">
@@ -334,6 +334,7 @@ export const Shop = () => {
                   </div>
                 </div>
               )}
+
               <img
                 src={product.imageUrl}
                 alt={product.name}
@@ -364,29 +365,29 @@ export const Shop = () => {
                   <FaCartPlus size={25} />
                 </button>
               </div>
-              <div className="flex items-center justify-between mt-4">
-              {userData && userData.email === "alyvdev@gmail.com" && (
-                <button
-                  onClick={() => {
-                    setEditingProduct(product);
-                    setNewName(product.name);
-                    setNewPrice(product.price);
-                    setNewDescription(product.description);
-                  }}
-                  className="text-xl text-white"
-                >
-                  <MdEdit size={25} />
-                </button>
-              )}
 
-              {userData && userData.email === "alyvdev@gmail.com" && (
-                <button
-                  onClick={() => handleDeleteProduct(product)}
-                  className=" text-xl text-red-600"
-                >
-                  <MdDelete size={25} />
-                </button>
-              )}
+              <div className="flex items-center justify-between mt-4">
+                {userData && userData.email === "alyvdev@gmail.com" && (
+                  <>
+                    <button
+                      onClick={() => {
+                        setEditingProduct(product);
+                        setNewName(product.name);
+                        setNewPrice(product.price);
+                        setNewDescription(product.description);
+                      }}
+                      className="text-xl text-white"
+                    >
+                      <MdEdit size={25} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProduct(product)}
+                      className="text-xl text-red-600"
+                    >
+                      <MdDelete size={25} />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))

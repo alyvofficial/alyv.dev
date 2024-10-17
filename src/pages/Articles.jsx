@@ -16,8 +16,6 @@ import {
 import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import hljs from "highlight.js";
-import "./Highlight.css";
 import "jodit";
 import JoditEditor from "jodit-react";
 import { useQuery, useQueryClient } from "react-query";
@@ -142,7 +140,6 @@ export const Articles = () => {
   };
 
   const isAdmin = userData && userData.email === "alyvdev@gmail.com";
-  const articleContentRef = useRef(null);
 
   const { data: articles } = useQuery(
     ["articles"],
@@ -215,11 +212,7 @@ export const Articles = () => {
     }
   };
 
-  useEffect(() => {
-    if (articleContentRef.current) {
-      hljs.highlightAll();
-    }
-  }, [articles]);
+
 
   const filteredAndSortedArticles = useMemo(() => {
     if (!articles) return { currentArticles: [], totalPages: 0 };
@@ -428,11 +421,11 @@ export const Articles = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center my-4">
+      <div className="flex items-center my-4 space-x-4 text-white">
         <button
           onClick={() => handlePagination("prev")}
           disabled={currentPage === 1}
-          className="disabled:hidden disabled:cursor-not-allowed text-white mr-3"
+          className="disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FaArrowAltCircleLeft size={20} />
         </button>
@@ -442,7 +435,7 @@ export const Articles = () => {
         <button
           onClick={() => handlePagination("next")}
           disabled={currentPage === totalPages}
-          className="disabled:hidden disabled:cursor-not-allowed ml-3"
+          className="disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FaArrowAltCircleRight size={20} />
         </button>

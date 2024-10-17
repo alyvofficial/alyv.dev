@@ -304,9 +304,9 @@ export const Comments = ({ articleId }) => {
             </button>
           </form>
         ) : (
-          <p className="mt-4 text-gray-700">
+          <p className="mt-4 text-gray-400">
             {translations.forComment}{" "}
-            <NavLink to="/auth/login" className="text-blue-600 hover:underline">
+            <NavLink to="/auth/login" className="text-blue-400 hover:underline">
               {translations.plsLogin}
             </NavLink>
             .

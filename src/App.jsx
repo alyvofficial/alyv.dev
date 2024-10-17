@@ -11,25 +11,26 @@ import { LoginPage } from "./pages/LoginPage";
 import { PageNotFound } from "./pages/PageNotFound";
 import { LanguageProvider } from "./providers/LanguageProvider";
 import { Shop } from "./pages/Shop";
+import { Vacancies } from "./pages/Vacancies";
 function App() {
   return (
     <FirebaseProvider>
       <AuthProvider>
-      <LanguageProvider>
-        <BrowserRouter>
-        <Header/>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/articles" element={<Articles />} />
-            <Route path="/articles/:id" element={<ArticlesDetails />} />
-            <Route path="/add-article" element={<AddArticleForm />} /> 
-            <Route path="/portfolio" element={<Portfolio />} /> 
-            <Route path="/auth/login" element={<LoginPage />} /> 
-            <Route path="/shop" element={<Shop />} /> 
-            <Route path="*" element={<PageNotFound />} /> 
-
-          </Routes>
-        </BrowserRouter>
+        <LanguageProvider>
+          <BrowserRouter>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/articles" element={<Articles />} />
+              <Route path="/articles/:id" element={<ArticlesDetails />} />
+              <Route path="/add-article" element={<AddArticleForm />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/auth/login" element={<LoginPage />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="*" element={<PageNotFound />} />
+              <Route path="/vacancies" element={<Vacancies />} />
+            </Routes>
+          </BrowserRouter>
         </LanguageProvider>
       </AuthProvider>
     </FirebaseProvider>

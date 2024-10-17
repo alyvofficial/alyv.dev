@@ -54,6 +54,14 @@ tr:nth-child(even) {
  color: #52e0c4;
 }
 
+pre {
+  background-color: #1a1a1a;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: white;
+}
+
 
 @media (max-width: 768px) {
   ul {

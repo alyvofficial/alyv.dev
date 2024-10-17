@@ -135,14 +135,14 @@ export const ArticlesDetails = () => {
   }
 
   return (
-    <section className=" shadow-md rounded-lg overflow-hidden mx-auto">
+    <section className=" shadow-md rounded-lg overflow-hidden mx-auto bg-white">
       <ToastContainer position="top-center" autoClose={2000} />
       {article ? (
         <div className="p-6">
           <div className="flex items-center justify-between text-gray-600 mb-4">
             <Link
               to="/articles"
-              className="flex items-center transition-colors hover:text-gray-400"
+              className="flex items-center transition-colors hover:text-gray-900"
             >
               <IoArrowBack className="w-6 h-6 mr-2" /> {translations.backToArticles}
             </Link>
@@ -150,16 +150,16 @@ export const ArticlesDetails = () => {
               onClick={handleShare}
               className=""
             >
-              <IoShareOutline className="w-6 h-6 text-gray-600 hover:text-gray-400 transition-colors" />
+              <IoShareOutline className="w-6 h-6 text-gray-600 hover:text-gray-900 transition-colors" />
             </button>
           </div>
           <div>
-            <h2 className="text-3xl font-bold text-white mb-2">
+            <h2 className="text-3xl font-bold text-black mb-2">
               {article.title}
             </h2>
-            <p className="text-sm text-[#64ffda] mb-4">{article.category}</p>
+            <p className="text-sm text-[#3c5fd5] mb-4">{article.category}</p>
             <div
-              className="prose lg:prose-xl max-w-none" // Prose for better typography
+              className="prose lg:prose-xl max-w-none text-black"
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
 
@@ -171,10 +171,10 @@ export const ArticlesDetails = () => {
                       e.stopPropagation();
                       handleLike();
                     }}
-                    className="flex items-center gap-1 hover:text-white transition-colors"
+                    className="flex items-center gap-1 hover:text-blue-500 transition-colors"
                   >
                     {article.likes.includes(userData.uid) ? (
-                      <BiSolidLike className="text-white w-6 h-6" />
+                      <BiSolidLike className="text-blue-500 w-6 h-6" />
                     ) : (
                       <BiLike className="w-6 h-6" />
                     )}

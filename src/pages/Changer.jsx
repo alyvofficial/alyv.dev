@@ -4,7 +4,7 @@ export const Changer = () => {
     const { language, changeLanguage } = useLanguage();
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 pb-3">
             <span
                 onClick={() => changeLanguage("az")}
                 className={`cursor-pointer text-xs font-bold ${language === "az" ? "text-white" : "text-gray-500"}`}

@@ -7,6 +7,7 @@ import "jodit";
 import JoditEditor from "jodit-react";
 import { AddProject } from "./AddProject";
 import { AddProducts } from "./AddProducts";
+import { AddVacancies } from "./AddVacancies";
 
 export const AddArticleForm = () => {
   const { userData, firestore } = useAuthContext();
@@ -138,6 +139,8 @@ export const AddArticleForm = () => {
       <AddProject />
       <hr />
       <AddProducts />
+      <hr />
+      <AddVacancies />
     </section>
   );
 };

@@ -137,7 +137,7 @@ export const AddProducts = () => {
           uploading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
         } focus:outline-none focus:ring-indigo-500`}
       >
-        {uploading ? "Uploading..." : "Add Product"}
+        {uploading ? "Uploading..." : "Əlavə et"}
       </button>
 
       {uploadProgress > 0 && (

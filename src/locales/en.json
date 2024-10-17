@@ -6,6 +6,8 @@
   "articles": "Articles",
   "portfolio": "Portfolio",
   "shop": "Shop",
+  "login": "Login",
+  "vacancies": "Vacancies",
 
 
   "contact": "Contact",
@@ -70,5 +72,6 @@
   "yourCart": "Your Cart",
   "NoProductsInCart": "No products in cart",
   "remove": "Remove",
-  "close": "Close"
+  "close": "Close",
+  "NoProductsAvailable": "No products available"
 }

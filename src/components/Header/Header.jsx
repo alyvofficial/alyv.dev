@@ -70,7 +70,7 @@ export const Header = () => {
         </div>
       </div>
       <div className="w-full px-5 mb-3 flex items-center justify-between">
-        <ul className="w-full flex flex-wrap items-center gap-3 list-none m-0 text-sm">
+        <ul className="w-full flex items-center gap-3 list-none m-0 pb-3 text-sm overflow-x-auto mr-5">
           {!userData ? (
             <>
               <NavLink
@@ -91,6 +91,19 @@ export const Header = () => {
               >
                 <li className="list-none">{translations.shop}</li>
               </NavLink>
+              <NavLink
+                to="/auth/login"
+                className="text-gray-500 hover:text-white text-nowrap"
+              >
+                <li className="list-none">{translations.login}</li>
+              </NavLink>
+              <NavLink
+                to="/vacancies"
+                className="text-gray-500 hover:text-white"
+              >
+                <li className="list-none">{translations.vacancies}</li>
+              </NavLink>
+              
             </>
           ) : (
             <>
@@ -111,6 +124,12 @@ export const Header = () => {
                 className="text-gray-500 hover:text-white"
               >
                 <li className="list-none">{translations.shop}</li>
+              </NavLink>
+              <NavLink
+                to="/vacancies"
+                className="text-gray-500 hover:text-white"
+              >
+                <li className="list-none">{translations.vacancies}</li>
               </NavLink>
               {userData && userData.email === "alyvdev@gmail.com" && (
                 <>
