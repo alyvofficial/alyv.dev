@@ -47,7 +47,6 @@ export const AddVacancies = () => {
       field,
       postingDate: new Date(postingDate),
       postedBy: `${userData.Name} ${userData.Surname}`,
-      dateAdded: new Date(),
     };
 
       await addDoc(collection(firestore, "vacancies"), vacancyData);
@@ -84,7 +83,6 @@ export const AddVacancies = () => {
       </label>
 
       <label className="flex flex-col mb-4 text-black">
-        <span>Açıqlama:</span>
         <JoditEditor
                 ref={editorRef}
                 value={content}

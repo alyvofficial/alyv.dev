@@ -259,10 +259,17 @@ export const About = () => {
                 <p className="text-white">jQuery</p>
                 <div className="h-2 bg-[#969696] w-3/4 rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
-
               <div className="mb-2">
                 <p className="text-white">HTML / CSS</p>
                 <div className="h-2 bg-[#969696] w-full rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
+              </div>
+              <div className="mb-2">
+                <p className="text-white">GitHub</p>
+                <div className="h-2 bg-[#969696] w-[90%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
+              </div>
+              <div className="mb-2">
+                <p className="text-white">Git</p>
+                <div className="h-2 bg-[#969696] w-[90%] rounded-full mt-1 hover:bg-[#64ffda] transition"></div>
               </div>
             </div>
             <h2 className="sm:text-base lg:text-lg font-bold text-[#64ffda] mt-6 mb-3">
