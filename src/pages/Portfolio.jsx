@@ -247,7 +247,7 @@ export const Portfolio = () => {
                 key={project.id}
                 className={`relative overflow-hidden rounded-xl shadow-lg ${
                   projectType === "web"
-                    ? "sm:w-full md:w-[49%] lg:w-[33%] aspect-video bg-cover bg-center"
+                    ? "sm:w-full md:w-[49%] lg:w-[32%] aspect-video bg-cover bg-center"
                     : "sm:w-full md:w-[49%] lg:w-[24%] aspect-[4/5] bg-cover bg-center"
                 }`}
                 style={{
