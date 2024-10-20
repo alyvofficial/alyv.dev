@@ -71,5 +71,16 @@
   "NoProductsInCart": "Səbətdə məhsul yoxdur",
   "remove": "Sil",
   "close": "Bağla",
-  "NoProductsAvailable": "Məhsul mövcud deyil"
+  "NoProductsAvailable": "Məhsul mövcud deyil",
+
+
+
+  "loadingVacancies": "Vakansiyalar yüklənir...",
+  "noVacanciesFound": "Vakansiyalar tapılmadı",
+  "hideDescription": "Açıqlamanı gizlə",
+  "showDescription": "Açıqlamanı göstər",
+  "byAgreement": "Razılaşma yolu ilə",
+  "salary": "Maaş",
+  "jobType": "İş növü",
+  "location": "Ünvan"
 }

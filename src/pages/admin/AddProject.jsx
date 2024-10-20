@@ -15,6 +15,7 @@ export const AddProject = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const handleImageUpload = async (file) => {
     const options = {
@@ -129,6 +130,15 @@ export const AddProject = () => {
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               className="sm:w-full lg:w-1/3 p-2 border bg-[#232323] text-white rounded"
+            />
+          </label>
+          <label className="flex flex-col mb-4">
+            <span className="text-white">Tarix:</span>
+            <input
+              type="date"
+              value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+              onChange={(e) => setSelectedDate(new Date(e.target.value))}
+              className="sm:w-full lg:w-1/3  p-2 border bg-[#232323] text-white rounded"
             />
           </label>
           {projectType === "web" && (

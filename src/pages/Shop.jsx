@@ -235,7 +235,7 @@ export const Shop = () => {
   return (
     <section className="w-full mx-auto p-4 bg-black min-h-screen">
       <ToastContainer position="top-center" autoClose={2000} />
-      <div className="mb-8 bg-[#232323] sm:w-full lg:w-1/3 p-4 rounded-lg">
+      <div className="mb-8 bg-gray-800 sm:w-full lg:w-1/3 p-4 rounded-lg">
         <h2 className="text-white text-xl mb-4">{translations.yourCart}</h2>
         {selectedProducts.length === 0 ? (
           <p className="text-gray-400">{translations.NoProductsInCart}</p>

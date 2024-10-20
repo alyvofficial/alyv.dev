@@ -73,5 +73,15 @@
   "NoProductsInCart": "No products in cart",
   "remove": "Remove",
   "close": "Close",
-  "NoProductsAvailable": "No products available"
+  "NoProductsAvailable": "No products available",
+
+
+  "loadingVacancies": "Vacancies are loading...",
+  "noVacanciesFound": "No vacancies found",
+  "hideDescription": "Hide Description",
+  "showDescription": "Show Description",
+  "byAgreement": "By agreement",
+  "salary": "Salary",
+  "jobType": "Job Type",
+  "location": "Location"
 }

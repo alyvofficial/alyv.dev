@@ -21,6 +21,7 @@ import { useQuery } from "react-query";
 import "react-toastify/dist/ReactToastify.css";
 import "jodit";
 import JoditEditor from "jodit-react";
+import { useLanguage } from "../providers/LanguageProvider";
 
 export const Vacancies = () => {
   const { firestore, userData } = useAuthContext();
@@ -31,6 +32,7 @@ export const Vacancies = () => {
   const [totalPages, setTotalPages] = useState(0);
   const editorRef = useRef(null);
   const [expandedVacancyId, setExpandedVacancyId] = useState(null);
+  const {translations} = useLanguage();
 
   const config = useMemo(() => {
     return {
@@ -172,7 +174,7 @@ export const Vacancies = () => {
       description: vacancy.description || "",
       emailOrLink: vacancy.emailOrLink || "",
       field: vacancy.field || "",
-      jobType: vacancy.jobType || "", // Ensure this is initialized
+      jobType: vacancy.jobType || "",
       location: vacancy.location || "",
       postedBy: vacancy.postedBy || "",
       postingDate:
@@ -222,51 +224,56 @@ export const Vacancies = () => {
   };
 
   return (
-    <section className="w-full mx-auto my-4 p-5">
+    <section className="w-full mx-auto my-4 p-4">
       <ToastContainer position="top-center" autoClose={2000} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading ? (
           <div className="text-white text-center col-span-3 rounded-lg shadow-md">
-            Loading vacancies...
+            {translations.loadingVacancies}
           </div>
         ) : vacancies.length > 0 ? (
           vacancies.map((vacancy) => (
             <div
               key={vacancy.id}
-              className="p-6 bg-gray-800 text-white rounded-lg shadow-md hover:shadow-xl transition duration-200"
+              className="p-4 bg-gray-800 text-white rounded-lg shadow-md hover:shadow-xl transition duration-200"
             >
               <h2 className="text-xl font-bold mb-2">{vacancy.title}</h2>
               <p className="text-[#52e0c4] mb-2">{vacancy.company}</p>
               <button
                 onClick={() => toggleDescription(vacancy.id)}
-                className="text-blue-500 underline mb-4"
+                className="text-blue-300 underline mb-4"
               >
                 {expandedVacancyId === vacancy.id
-                  ? "Hide Description"
-                  : "Show Description"}
+                  ? translations.hideDescription
+                  : translations.showDescription}
               </button>
 
               {expandedVacancyId === vacancy.id && (
                 <div
-                  className="text-white mb-4"
+                  className="text-white bg-gray-700 p-4 rounded-lg mb-4"
                   dangerouslySetInnerHTML={{ __html: vacancy.description }}
                 />
               )}
-              <p className="text-sm text-gray-400 mb-2">
-                Maaş: {vacancy.salary || "Razılaşma yolu ilə"}
+              <div className="flex w-full items-center justify-between">
+              <p className="text-sm text-gray-400 mb-2 hover:text-white translation-text duration-300">
+                {translations.salary}: {vacancy.salary || translations.byAgreement}
               </p>
-              <p className="text-sm text-gray-400 mb-2">
-                İş növü: {vacancy.jobType}
+              <p className="text-sm text-gray-400 mb-2 hover:text-white translation-text duration-300">
+                {translations.jobType}: {vacancy.jobType}
               </p>
-              <p className="text-sm text-gray-400 mb-2">
-                Ərazi / Bölgə: {vacancy.location}
+              </div>
+              <div className="flex w-full items-center justify-between">
+              <p className="text-sm text-gray-400 mb-2 hover:text-white translation-text duration-300">
+                {translations.location}: {vacancy.location}
               </p>
-              <p className="text-sm text-gray-400 mb-2">
+              <p className="text-sm text-gray-400 mb-2 hover:text-white translation-text duration-300">
                 {vacancy.postingDate instanceof Timestamp
                   ? vacancy.postingDate.toDate().toLocaleDateString()
                   : vacancy.postingDate}
               </p>
+              </div>
+             
 
               {userData && userData.email === "alyvdev@gmail.com" && (
                 <div className="flex gap-2 items-center">
