@@ -297,7 +297,7 @@ export const Portfolio = () => {
                 </div>
                 {editingProject && editingProject.id === project.id && (
                   <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-                    <div className="p-4 rounded-lg bg-white">
+                    <div className="p-4 rounded-lg bg-white text-black">
                       <input
                         type="text"
                         value={newCaption}

@@ -135,7 +135,7 @@ export const ArticlesDetails = () => {
   }
 
   return (
-    <section className=" shadow-md rounded-lg overflow-hidden mx-auto bg-white">
+    <section className=" bg-white">
       <ToastContainer position="top-center" autoClose={2000} />
       {article ? (
         <div className="p-6">

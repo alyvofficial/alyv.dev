@@ -19,7 +19,7 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #1a1a1a;
+  background-color: #707070;
 }
 ul {
   list-style: initial;

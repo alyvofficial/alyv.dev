@@ -18,7 +18,7 @@ import { useLanguage } from "../providers/LanguageProvider";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaCartPlus } from "react-icons/fa6";
-import { MdDelete, MdEdit } from "react-icons/md";
+import { MdDelete, MdEdit, MdOutlineCancel } from "react-icons/md";
 import { ref, deleteObject } from "firebase/storage";
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
 
@@ -118,23 +118,40 @@ export const Shop = () => {
     const quantityToAdd = quantities[product.id] || 1;
     setSelectedProducts((prevProducts) => {
       const existingProduct = prevProducts.find((p) => p.id === product.id);
+      let updatedProducts;
       if (existingProduct) {
-        return prevProducts.map((p) =>
+        updatedProducts = prevProducts.map((p) =>
           p.id === product.id
             ? { ...p, quantity: p.quantity + quantityToAdd }
             : p
         );
       } else {
-        return [...prevProducts, { ...product, quantity: quantityToAdd }];
+        updatedProducts = [...prevProducts, { ...product, quantity: quantityToAdd }];
       }
+      
+      localStorage.setItem('cart', JSON.stringify(updatedProducts));
+  
+      return updatedProducts;
     });
   };
-
+  
   const removeFromCart = (productId) => {
-    setSelectedProducts((prevProducts) =>
-      prevProducts.filter((product) => product.id !== productId)
-    );
+    setSelectedProducts((prevProducts) => {
+      const updatedProducts = prevProducts.filter((product) => product.id !== productId);
+      
+      localStorage.setItem('cart', JSON.stringify(updatedProducts));
+  
+      return updatedProducts;
+    });
   };
+  
+  useEffect(() => {
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+      setSelectedProducts(JSON.parse(storedCart));
+    }
+  }, []);
+  
 
   const openProductModal = (product) => {
     setSelectedProductDetails(product);
@@ -240,14 +257,14 @@ export const Shop = () => {
         {selectedProducts.length === 0 ? (
           <p className="text-gray-400">{translations.NoProductsInCart}</p>
         ) : (
-          <div className="list-decimal text-white">
+          <div className=" text-white flex flex-col gap-3">
             {selectedProducts.map((product) => (
               <div
                 key={product.id}
                 className="flex items-center justify-between"
               >
                 <p className="flex justify-between items-center">
-                  <span className="text-white">
+                  <span className="text-gray-200">
                     {product.name} ({product.quantity}) -{" "}
                     {product.price * product.quantity}₼
                   </span>
@@ -256,11 +273,11 @@ export const Shop = () => {
                   onClick={() => removeFromCart(product.id)}
                   className="text-red-500"
                 >
-                  <MdDelete size={25} />
+                  <MdOutlineCancel size={25} />
                 </button>
               </div>
             ))}
-            <div className="mt-4 text-white text-lg">
+            <div className="mt-4 text-white text-lg font-bold">
               {translations.totalPrice}:{" "}
               {selectedProducts.reduce(
                 (total, product) => total + product.price * product.quantity,
@@ -277,7 +294,7 @@ export const Shop = () => {
             href={createWhatsAppLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-[#383838] mt-4 block p-2 text-white text-center rounded"
+            className="bg-[#383838] mt-4 block p-2 text-white hover:bg-[#25D366] hover:text-black text-center rounded transition-colors duration-150"
           >
             {translations.checkoutWithWhatsApp}
           </a>

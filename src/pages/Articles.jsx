@@ -37,7 +37,7 @@ export const Articles = () => {
   const [sortOrder, setSortOrder] = useState("newest");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const articlesPerPage = 4;
+  const articlesPerPage = 8;
   const [lastVisible, setLastVisible] = useState(null);
   const [firstVisible, setFirstVisible] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
@@ -49,7 +49,6 @@ export const Articles = () => {
       readonly: false,
       height: "500px",
       uploader: { insertImageAsBase64URI: true },
-      theme: "dark",
     }),
     []
   );
@@ -311,7 +310,7 @@ export const Articles = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap  gap-4">
         {filteredAndSortedArticles.currentArticles.length > 0 ? (
           filteredAndSortedArticles.currentArticles.map((article) => (
             <div
@@ -321,8 +320,8 @@ export const Articles = () => {
                   navigate(`/articles/${article.id}`);
                 }
               }}
-              className={`p-2 bg-[#232323] shadow-lg rounded-xl relative sm:w-full lg:w-[49%] lg:${
-                editArticleId === article.id ? "w-full" : "w-[49%]"
+              className={`p-5 bg-[#232323] shadow-lg rounded-xl relative lg:${
+                editArticleId === article.id ? "" : ""
               } cursor-pointer ${
                 editArticleId === article.id ? "bg-[#232323]" : ""
               }`}
@@ -382,7 +381,7 @@ export const Articles = () => {
                         value={editContent}
                         config={config}
                         onChange={(newContent) => handleEditChange(newContent)}
-                        className="w-full"
+                        className="w-full text-black"
                       />
                       <button
                         onClick={(e) => {
