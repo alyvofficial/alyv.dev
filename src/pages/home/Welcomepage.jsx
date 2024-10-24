@@ -22,7 +22,7 @@ export const Welcomepage = () => {
         transition={{ duration: 0.7 }} // Animasyon süresi
       >
       <div className="flex flex-col items-start sm:w-full lg:w-max">
-        <h1 className="sm:text-3xl lg:text-5xl font-semibold mb-2">
+        <h1 className="sm:text-4xl lg:text-7xl font-semibold mb-2">
           {translations.name}
         </h1>
         <p className="sm:text-xs lg:text-xl mb-2 text-[#64ffda] sm:w-50 lg:w-96">

@@ -38,11 +38,11 @@ export const About = () => {
       );
   };
   return (
-    <section className="w-full bg-black text-white">
-      <div className="px-4 py-4">
-        <div className="flex flex-col sm:flex-col lg:flex-row gap-8">
+    <section className="w-full bg-black text-white flex items-center justify-center p-4">
+      <div className="">
+        <div className="flex sm:flex-col lg:flex-row gap-8 w-full">
         <motion.div
-          className="flex flex-col sm:flex-col lg:flex-row gap-8"
+          className="flex flex-col sm:flex-col lg:flex-row gap-8 sm:w-full md:w-full lg:w-1/3"
           initial={{ opacity: 0, y: 50 }} // İlk yüklemede görünmez ve aşağıda başlar
           whileInView={{ opacity: 1, y: 0 }} // Göründüğünde şeffaflık ve y pozisyonu değişir
           transition={{ duration: 0.6 }} // Animasyonun süresi
@@ -51,7 +51,7 @@ export const About = () => {
           {/* Sol Bölüm */}
           <div
             id="contact"
-            className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1"
+            className="bg-[#232323] sm:p-4 lg:p-5 rounded-md w-full"
           >
             <h2 className="text-xl font-bold text-[#64ffda] mb-4">{translations.contact}</h2>
             <div className="mb-4">
@@ -106,6 +106,7 @@ export const About = () => {
                   required
                   value={user?.displayName}
                   readOnly
+                  placeholder={translations.nameInputForm}
                 />
               </div>
               <div className="mb-4">
@@ -120,6 +121,7 @@ export const About = () => {
                   required
                   value={user?.email}
                   readOnly
+                  placeholder={translations.emailInputForm}
                 />
               </div>
               <div className="mb-4">
@@ -219,15 +221,15 @@ export const About = () => {
           </div>
           </motion.div>
           <motion.div
-            className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1"
-            initial={{ opacity: 0, x: -50 }} // Sağdan soldan kayma animasyonları için x değerini değiştir
+            className="flex flex-col sm:flex-col lg:flex-row gap-8 sm:w-full md:w-full lg:w-1/3"
+            initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
 
           {/* Orta Bölüm */}
-          <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
+          <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md w-full">
             <h2 className="text-xl font-bold text-[#64ffda] mb-4">
               {translations.skills}
             </h2>
@@ -328,14 +330,14 @@ export const About = () => {
           </div>
           </motion.div>
           <motion.div
-            className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1"
+            className="flex flex-col sm:flex-col lg:flex-row gap-8 sm:w-full md:w-full lg:w-1/3"
             initial={{ opacity: 0, y: 50 }} // Bu sefer yukarıdan aşağı kayar
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
           {/* Sağ Bölüm */}
-          <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md flex-1">
+          <div className="bg-[#232323] sm:p-4 lg:p-5 rounded-md w-full">
             <div>
               <h2 className="text-xl font-bold text-[#64ffda] mb-3">{translations.experience}</h2>
               <div className="mb-2">

@@ -46,8 +46,9 @@ export const Header = () => {
         <div ref={menuRef} className="">
           {" "}
           {!userData ? (
-            <NavLink to="/auth/login" className="relative select-none">
+            <NavLink to="/auth/login" className="relative select-none flex items-center justify-center gap-2 bg-[#232323] p-2 rounded-lg">
               <FaUserCircle size={20} className="text-white" />
+                {translations.login}
             </NavLink>
           ) : (
             <div className="flex items-center justify-between p-1.5 gap-2.5 rounded-lg">
@@ -90,12 +91,6 @@ export const Header = () => {
                 className="text-gray-500 hover:text-white"
               >
                 <li className="list-none">{translations.shop}</li>
-              </NavLink>
-              <NavLink
-                to="/auth/login"
-                className="text-gray-500 hover:text-white text-nowrap"
-              >
-                <li className="list-none">{translations.login}</li>
               </NavLink>
               <NavLink
                 to="/vacancies"
